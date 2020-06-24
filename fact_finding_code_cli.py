@@ -6,38 +6,15 @@ import json
 import io
 from itertools import product
 from itertools import chain
+from data_file import main_test_utt, utt_map_intent
+
 # Update varibales before each full run: intent_list_to_test, single_turn
+#intent_list_to_test = ["session_restart", "slot_yes_no"]
+#intent_list_to_test = ["greet_test_utt", "touch_test_utt", "slot_button_practicetype"]
+intent_list_to_test = ["arrange_witness_test_utt", "cost_test_utt", "biz_sales_and_purchase", "contract_review", "draft_update_TnC_Contracts_intent"]
+single_turn = True
 
 print("\n<><><><><><><><><><> Testing begins <><><><><><><><><><>")
-main_test_utt = {
-                ################################## Single-turn ###################################
-                "info_test_utt" : ["i want to ask some general questions"], \
-                "arrange_witness_test_utt" : ["can a beneficiary witness my will", "i do not have anyone available to witness my will can you help"], \
-                "cost_test_utt" : ["Will there be any additional fees to your fee?", "what are the costs to your services if i am not entitled to legal aid?", "Is it free to amend a visa?", "How much do you charge for ​will amendments?", "how much do you charge to prepare a ​will?", "what are the costs for your services if i am not entitled to legal aid?", "what is the cost of making a ​will​ if i am not entitled to legal aid?", "do you deal with ​willa? How much do you charge?", "i need a cost estimate for legal proceedings.", "how much will it cost for you to act for me on a wildcard dispute?", "I have a dispute but need to know how much it will cost me before i instruct?", "How much will legal proceedings cost overall?"], \
-                "slot_biz_sales_and_purchase" = ["I am buying an anything business. Can you help me?"], \
-                "slot_contract_review" = ["can you help me with contract review?"], \
-                "slot_draft_update_TnC" = ["can you draft me a contract?", "can you help me with my TnC?", "can you help me with my terms and conditions?", "i want to update my TnCs", "i want to update my terms and conditions", "i need my terms and conditions updating", "i need some new terms and conditions.", "can you draft me some terms and conditions?", ""], \
-                "slot_employment" =
-                "slot_NDA" =
-                "slot_shareholders_agreement" =
-                "slot_commercial_lease_landlord" =
-                "slot_commercial_lease_tenant" =
-                "slot_sell_comm_property" =
-                "slot_buy_comm_property" =
-                "slot_personal_injury" =
-                ################################## Multi-turn ####################################
-                "greet_test_utt" : ["hi", "hello", "hello there", "hey", "hiya", "hi there", "hey bot", "good morning", "good evening", "good afternoon", "morning"], \
-                "touch_test_utt" : ["Get me in touch with a solicitor"], \
-                ################################ Restart/Resume ##################################
-                "session_restart" : [ "Restart the session", "restart session", "i would like to restart the session", "can i start the session again?", "start over", "can i restart the session", "i want to start over"], \
-                "yes_no": ["yes"]
-                }
-
-utt_map_intent = {"greet_test_utt": "greet_intent",  "info_test_utt": "user_choice_to_general_info_intent", "touch_test_utt": "user_choice_to_contact_solicitor_intent", "cost_test_utt": "faq_cost_legalaid_intent", "arrange_witness_test_utt": "faq_arrange_witness_intent", "session_restart": "restart_session_intent", "yes_no": "not-an-intent"}
-
-#intent_list_to_test = ["session_restart", "yes_no"]
-intent_list_to_test = ["greet_test_utt", "touch_test_utt", ]#"greet_test_utt", "info_test_utt", "touch_test_utt"]
-single_turn = False
 
 correct_intent_names = []
 
@@ -49,8 +26,11 @@ else:
     ####################################### Fact finding (multi-turn) #######################################
     subdict_main = {item:main_test_utt[item] for item in intent_list_to_test}#; print(subdict)
     L = list(item for item in product(*subdict_main.values()))#; print("L--:",L)
-    subdict_correct_intent = {item:[utt_map_intent[item]]*len(main_test_utt[item]) for item in intent_list_to_test}#; print(subdict_correct_intent)
+    subdict_correct_intent = {item:[utt_map_intent[item]]*len(main_test_utt[item]) for item in intent_list_to_test}
     #print([[utt_map_intent[intent_list_to_test[0]]]]*len(main_test_utt[intent_list_to_test[0]]))
+    if "slot_button_practicetype" in subdict_correct_intent:
+        subdict_correct_intent["slot_button_practicetype"] = ["get_details", "contract_review_intent", "draft_update_TnC_Contracts_intent", "Employment_contracts_intent", "Employment_policies_and_procedures_intent", "Employment_dispute_make_claim", "Employment_dispute_receive_claim", "Employment_settlement_agreement", "NDA", "SHD_incorporate_new_company", "SHD_incorporate_new_company", "SHD_incorporate_new_company", "SHD_incorporate_new_company", "Commercial_lease_acting_for_landlord", "Commercial_lease_acting_for_landlord", "Selling_commercial_property", "Buying_commercial_property", "Personal_injury"]
+    print("correct sublist", subdict_correct_intent)
     correct_intent_names = list(item for item in product(*subdict_correct_intent.values()))
     
 #print(L)
@@ -63,15 +43,22 @@ file = open(file_name, 'w')
 
 count_conv = 0
 for items in L:
+    #subprocess.run(args=['aws', 'lex-runtime', 'post-text', '--region', 'eu-west-1', '--bot-name', 'experiment_legal_bot', '--bot-alias', '$LATEST', '--user-id', 'msharma', '--input-text', "restart session"], capture_output=False)
+    #subprocess.run(args=['aws', 'lex-runtime', 'post-text', '--region', 'eu-west-1', '--bot-name', 'experiment_legal_bot', '--bot-alias', '$LATEST', '--user-id', 'msharma', '--input-text', "yes"], capture_output=False)
     count_conv += 1
     file.write('\n\n**************** Conversation flow {} ****************'.format(count_conv))
+    print('\n\n**************** Conversation flow {} ****************'.format(count_conv))
     for item in items:
         print(items, item)
-        cp = subprocess.run(args=['aws', 'lex-runtime', 'post-text', '--region', 'eu-west-1', '--bot-name', 'experiment_legal_bot', '--bot-alias', '$LATEST', '--user-id', 'msharma', '--input-text', item], capture_output=True) #print("before",cp.stdout.decode('utf-8')) # on command line: aws lex-runtime post-text --region eu-west-1 --bot-name experiment_legal_bot --bot-alias \$LATEST --user-id msharma --input-text "hi"
+        cp = subprocess.run(args=['aws', 'lex-runtime', 'post-text', '--region', 'eu-west-1', '--bot-name', 'experiment_legal_bot', '--bot-alias', '$LATEST', '--user-id', 'msharma', '--input-text', item], capture_output=True)#; print("before",cp.stdout.decode('utf-8')) # on command line: aws lex-runtime post-text --region eu-west-1 --bot-name experiment_legal_bot --bot-alias \$LATEST --user-id msharma --input-text "hi"
         out = json.loads(cp.stdout.decode('utf-8')); print(out,"\n")
-        if item not in main_test_utt["yes_no"]:
-            #file.write("\n==========> User input- {}\nIntent name- {}\nBot response- {}".format(item, out['sessionAttributes']['prev_intent'], out['message']))
-            file.write("\n==========> User input- {}\nIntent name- {}\nBot response- {}".format(item, out['intentName'], out['message']))
+        if item in main_test_utt["slot_yes_no"]:
+            continue
+        else:
+            if "intentName" in out:
+                file.write("\n==========> User input- {}\nIntent name- {}\nBot response- {}".format(item, out['intentName'], out['message']))
+            else:
+                file.write("\n==========> User input- {}\nIntent name- {}\nBot response- {}".format(item, out['sessionAttributes']['prev_intent'], out['message']))
 
 file.close()
 
