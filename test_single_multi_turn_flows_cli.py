@@ -11,8 +11,7 @@ from data_file import main_test_utt, utt_map_intent
 # Update varibales before each full run: intent_list_to_test, single_turn
 #intent_list_to_test = ["session_restart", "slot_yes_no"]
 #intent_list_to_test = ["greet_test_utt", "touch_test_utt", "slot_button_practicetype"]
-intent_list_to_test = ["amend_will","appl_check_visa", "appl_check_visa", "appl_claim_length", "appointment_diff_office", "appointment_length", "arrange_witness_test_utt", "attend_meeting_someone", "boundary_neighbor_dispute", "CCJ", "copy_will", "cost_test_utt", "court_hearing_visa", "director_not_acting_properly", "disparaging_statement", "employment_tribunal", "expired_visa", "home_visit", "interpreter_visa", "legal_aid", "no_win_no_fee", "old_claim", "PI_MN", "prepare_appointment", "refusal_letter_visa", "settlement_agreement", "store_will", "user_owed_money_company", "user_owed_money", "validity_will", "faq_open_time",
-"biz_sales_and_purchase", "contract_review", "draft_update_TnC", "greet_test_utt"]
+intent_list_to_test = ["amend_will","appl_check_visa", "appl_check_visa", "appl_claim_length", "appointment_diff_office", "appointment_length", "arrange_witness_test_utt", "attend_meeting_someone", "boundary_neighbor_dispute", "CCJ", "copy_will", "cost_test_utt", "court_hearing_visa", "director_not_acting_properly", "disparaging_statement", "employment_tribunal", "expired_visa", "home_visit", "interpreter_visa", "legal_aid", "no_win_no_fee", "old_claim", "PI_MN", "prepare_appointment", "refusal_letter_visa", "settlement_agreement", "store_will", "user_owed_money_company", "user_owed_money", "validity_will", "faq_open_time", "biz_sales_and_purchase", "contract_review", "draft_update_TnC", "greet_test_utt"]
 single_turn = True
 
 print("\n<><><><><><><><><><> Testing begins <><><><><><><><><><>")
@@ -33,8 +32,6 @@ else:
         subdict_correct_intent["slot_button_practicetype"] = ["get_details", "contract_review_intent", "draft_update_TnC_Contracts_intent", "Employment_contracts_intent", "Employment_policies_and_procedures_intent", "Employment_dispute_make_claim", "Employment_dispute_receive_claim", "Employment_settlement_agreement", "NDA", "SHD_incorporate_new_company", "SHD_incorporate_new_company", "SHD_incorporate_new_company", "SHD_incorporate_new_company", "Commercial_lease_acting_for_landlord", "Commercial_lease_acting_for_landlord", "Selling_commercial_property", "Buying_commercial_property", "Personal_injury"]
     print("correct sublist", subdict_correct_intent)
     correct_intent_names = list(item for item in product(*subdict_correct_intent.values()))
-    
-#print(L)
 
 ################################################ Writing ################################################
 print("\n\n<><><><><><><><><><> Writing to a file <><><><><><><><><><>")
@@ -46,7 +43,6 @@ count_conv = 0
 for items in L:
     #subprocess.run(args=['aws', 'lex-runtime', 'post-text', '--region', 'eu-west-1', '--bot-name', 'experiment_legal_bot', '--bot-alias', '$LATEST', '--user-id', 'msharma', '--input-text', "restart session"], capture_output=False)
     #subprocess.run(args=['aws', 'lex-runtime', 'post-text', '--region', 'eu-west-1', '--bot-name', 'experiment_legal_bot', '--bot-alias', '$LATEST', '--user-id', 'msharma', '--input-text', "yes"], capture_output=False)
-    count_conv += 1
     file.write('\n\n**************** Conversation flow {} ****************'.format(count_conv))
     print('\n\n**************** Conversation flow {} ****************'.format(count_conv))
     for item in items:
@@ -60,6 +56,7 @@ for items in L:
                 file.write("\n==========> User input- {}\nIntent name- {}\nBot response- {}".format(item, out['intentName'], out['message']))
             else:
                 file.write("\n==========> User input- {}\nIntent name- {}\nBot response- {}".format(item, out['sessionAttributes']['prev_intent'], out['message']))
+    count_conv += 1
 
 file.close()
 
@@ -82,13 +79,13 @@ with open(file_name, 'r') as file:
 #print("Intents identified by lex: ", main_intent_list)
 
 conversation_flow_number = 0
-conversation_score_count = 0
+pass_count = 0
+fail_count = 0
 print("---------------------------------------------------------------------------------")
 print("|Conversation flow | Number of intents | correctly identified intents | Result  |")
 print("---------------------------------------------------------------------------------")
 for sub_lists in zip(correct_intent_names, main_intent_list):
     #print("sub lists",sub_lists)
-    conversation_flow_number += 1
     n_correct_intent = 0
     n_intents = 0
     for first, second in zip(sub_lists[0], sub_lists[1]):
@@ -98,9 +95,13 @@ for sub_lists in zip(correct_intent_names, main_intent_list):
             n_correct_intent += 1
     if n_correct_intent == n_intents:
         pass_fail = "Pass"
+        pass_count += 1
     else:
         pass_fail = "Fail"
+        fail_count += 1
+    conversation_flow_number += 1
     print("| {} \t\t   | {} \t\t       | {} \t\t              | {} \t|".format(conversation_flow_number, n_intents, n_correct_intent, pass_fail))
 print("---------------------------------------------------------------------------------")
-#print("Test score is {}\n".format(score/len(correct_intent_names)))
-print("\n\n<><><><><><><><><><> Testing is complete <><><><><><><><><><>\n")
+total_test_cases = pass_count + fail_count
+print("\n\n{} out of {} test cases passed with {}% score.".format(pass_count, total_test_cases, pass_count*100/total_test_cases))
+print("\n\n<><><><><><><><><><> Testing complete <><><><><><><><><><>\n")
