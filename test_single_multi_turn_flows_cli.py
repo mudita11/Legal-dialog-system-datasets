@@ -11,7 +11,8 @@ from data_file import main_test_utt, utt_map_intent
 # Update varibales before each full run: intent_list_to_test, single_turn
 #intent_list_to_test = ["session_restart", "slot_yes_no"]
 #intent_list_to_test = ["greet_test_utt", "touch_test_utt", "slot_button_practicetype"]
-intent_list_to_test = ["arrange_witness_test_utt", "cost_test_utt", "biz_sales_and_purchase", "contract_review", "draft_update_TnC_Contracts_intent"]
+intent_list_to_test = ["amend_will","appl_check_visa", "appl_check_visa", "appl_claim_length", "appointment_diff_office", "appointment_length", "arrange_witness_test_utt", "attend_meeting_someone", "boundary_neighbor_dispute", "CCJ", "copy_will", "cost_test_utt", "court_hearing_visa", "director_not_acting_properly", "disparaging_statement", "employment_tribunal", "expired_visa", "home_visit", "interpreter_visa", "legal_aid", "no_win_no_fee", "old_claim", "PI_MN", "prepare_appointment", "refusal_letter_visa", "settlement_agreement", "store_will", "user_owed_money_company", "user_owed_money", "validity_will", "faq_open_time",
+"biz_sales_and_purchase", "contract_review", "draft_update_TnC", "greet_test_utt"]
 single_turn = True
 
 print("\n<><><><><><><><><><> Testing begins <><><><><><><><><><>")
