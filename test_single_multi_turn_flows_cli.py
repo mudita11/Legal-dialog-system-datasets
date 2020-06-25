@@ -30,9 +30,10 @@ else:
     #print([[utt_map_intent[intent_list_to_test[0]]]]*len(main_test_utt[intent_list_to_test[0]]))
     if "slot_button_practicetype" in subdict_correct_intent:
         subdict_correct_intent["slot_button_practicetype"] = ["get_details", "contract_review_intent", "draft_update_TnC_Contracts_intent", "Employment_contracts_intent", "Employment_policies_and_procedures_intent", "Employment_dispute_make_claim", "Employment_dispute_receive_claim", "Employment_settlement_agreement", "NDA", "SHD_incorporate_new_company", "SHD_incorporate_new_company", "SHD_incorporate_new_company", "SHD_incorporate_new_company", "Commercial_lease_acting_for_landlord", "Commercial_lease_acting_for_landlord", "Selling_commercial_property", "Buying_commercial_property", "Personal_injury"]
-    print("correct sublist", subdict_correct_intent)
+    #print("correct sublist", subdict_correct_intent)
     correct_intent_names = list(item for item in product(*subdict_correct_intent.values()))
 
+#print(correct_intent_names)
 ################################################ Writing ################################################
 print("\n\n<><><><><><><><><><> Writing to a file <><><><><><><><><><>")
 
@@ -48,7 +49,7 @@ for items in L:
     for item in items:
         print(items, item)
         cp = subprocess.run(args=['aws', 'lex-runtime', 'post-text', '--region', 'eu-west-1', '--bot-name', 'experiment_legal_bot', '--bot-alias', '$LATEST', '--user-id', 'msharma', '--input-text', item], capture_output=True)#; print("before",cp.stdout.decode('utf-8')) # on command line: aws lex-runtime post-text --region eu-west-1 --bot-name experiment_legal_bot --bot-alias \$LATEST --user-id msharma --input-text "hi"
-        out = json.loads(cp.stdout.decode('utf-8')); print(out,"\n")
+        out = json.loads(cp.stdout.decode('utf-8'))#; print(out,"\n")
         if item in main_test_utt["slot_yes_no"]:
             continue
         else:
@@ -99,8 +100,8 @@ for sub_lists in zip(correct_intent_names, main_intent_list):
     else:
         pass_fail = "Fail"
         fail_count += 1
-    conversation_flow_number += 1
     print("| {} \t\t   | {} \t\t       | {} \t\t              | {} \t|".format(conversation_flow_number, n_intents, n_correct_intent, pass_fail))
+    conversation_flow_number += 1
 print("---------------------------------------------------------------------------------")
 total_test_cases = pass_count + fail_count
 print("\n\n{} out of {} test cases passed with {}% score.".format(pass_count, total_test_cases, pass_count*100/total_test_cases))
