@@ -1,1 +1,1 @@
-# Testing-legal-assistant
+# Regression testing for dialog system
