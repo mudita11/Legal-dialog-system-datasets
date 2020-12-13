@@ -1,5 +1,0 @@
-Test Design 1:
-Testing of greet, followed by choice for faq and fact finding followed by each service
-Number of conversation flows = 36
-Each conversation flow tested after a restart
-Result: 36 out of 36 test cases passed with 100.0% score.
