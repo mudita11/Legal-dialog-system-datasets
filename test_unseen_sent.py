@@ -1,12 +1,6 @@
-import os
 import subprocess
 import numpy as np
-import re
 import json
-import io
-from itertools import product, chain
-#from seen_data import utt_to_test, correct_intent_names
-import random
 import pyexcel
     
 def write_file_(file, L, correct_intent_names):
@@ -19,10 +13,8 @@ def write_file_(file, L, correct_intent_names):
         res = subprocess.run(args=['aws', 'lex-runtime', 'post-text', '--region', 'eu-west-1', '--bot-name', 'Switch_Bots', '--bot-alias', 'AlphaA', '--user-id', 'msharma', '--input-text', "restart"], capture_output=True)
         res_yes = subprocess.run(args=['aws', 'lex-runtime', 'post-text', '--region', 'eu-west-1', '--bot-name', 'Switch_Bots', '--bot-alias', 'AlphaA', '--user-id', 'msharma', '--input-text', "yes"], capture_output=True)
         print("\n",res_yes); file.write("\n\n{}".format(res_yes))
-        
         file.write('\n\n**************** Conversation flow {} ****************\n'.format(count_conv+1))
         print('\n\n**************** Conversation flow {} ****************\n'.format(count_conv+1))
-        
         correct_intent_names_index = 0
         for item in items:
             print("{} ==> {} ==> {}\n".format(items, item, correct_intent_names[count_conv][correct_intent_names_index]))
@@ -101,33 +93,25 @@ def read_xlsx(file_name):
     data = pyexcel.get_book_dict(file_name=file_name)
     faq_utt_to_test = [[cell for cell in row if cell !=''] for row in data['test_set']]
     faq_utt_to_test = [row for row in faq_utt_to_test if row != []]
-    
     faq_correct_intent_names = [[cell for cell in row if cell !=''] for row in data['intent_name']]
     faq_correct_intent_names = [row for row in faq_correct_intent_names if row != []]
-    
     return faq_utt_to_test, faq_correct_intent_names
 
 def main():
     file_name = "test_cases.xlsx"
     index_to_test = None
     faq_utt_to_test, faq_correct_intent_names = read_xlsx(file_name)
-    #index_to_test = [6, 16, 20, 23]#, 32, 34, 39, 42, 43, 47, 55, 56, 61, 65, 66, 68, 71, 72, 73, 74, 75, 78, 85, 86, 87, 88, 89, 90, 91, 94, 96, 99, 103, 111, 118, 129, 132, 134, 140, 141, 142, 152, 154, 162, 166, 167, 188, 195, 197, 202, 217, 222, 223, 232, 238, 243, 247, 252, 256, 259, 258, 266]#list(range(200, 270))
+    #index_to_test = list(range(200, 270))
     if index_to_test is not None:
         faq_utt_to_test = [faq_utt_to_test[item] for item in index_to_test]
         faq_correct_intent_names = [faq_correct_intent_names[item] for item in index_to_test]
-    
     print("\n<><><><><><><><><><> Testing begins <><><><><><><><><><>")
-
-    ################################################ Writing in index_store.txt ################################################
     print("\n\n<><><><><><><><><><> Writing to index_store file <><><><><><><><><><>")
-
     file_name = "intent_store.txt"
     file = open(file_name, 'w')
     write_file_(file, faq_utt_to_test, faq_correct_intent_names)
-    
     index_list = []
     identified_intent = False
-    
     with open(file_name, 'r') as file:
         for index, line in enumerate(file):
             if line.startswith("Identified intent-"):
@@ -137,12 +121,9 @@ def main():
                 if identified_intent_name != line.split("Correct intent- ")[1]:
                     index_list.append(index)
                 identified_intent = False
-    
-    ################################################ Writing in failed_store.txt ################################################
     print("\n\n<><><><><><><><><><> Writing to failed_store file <><><><><><><><><><>")
     failed_utt_file_store = "failed_store.txt"
     failed_file = open(failed_utt_file_store, 'w')
-    
     with open(file_name, 'r') as file:
         for index, line in enumerate(file):
             if index in index_list or index+1 in index_list or index+2 in index_list:
@@ -150,13 +131,9 @@ def main():
                 print("\n\n{}\n".format(line))
     failed_file.close()
     file.close()
-
-    ######################################## Intent Identification Test ######################################
     print("\n\n<><><><><><><><><><> Test log <><><><><><><><><><>")
     main_identified_intent_list, main_correct_intent_list = compile_identified_intent_(file_name)
-    ################################################ Test Log ################################################
     test_log_(main_identified_intent_list, main_correct_intent_list)
-    
     
 if __name__ == "__main__":
     main()
