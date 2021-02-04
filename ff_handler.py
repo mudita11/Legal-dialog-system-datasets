@@ -24,7 +24,7 @@ def posttext(bot_Name, bot_Alias, user_Id, input_Text):
 
     
 class response_per_intent():
-    ''' A class to ask questions to the user and record their contact details and case related information. '''
+    '''Ask questions to the user and record their contact details and case related information.'''
     def __init__(self, intent_request):
         self.slots = get_slots(intent_request)
         self.InputText = intent_request['inputTranscript']
@@ -36,7 +36,7 @@ class response_per_intent():
         self.sessattr['prev_intent'] = self.intent_name
     
     def create_dynamodb_table(self):
-        ''' This function creates a MySQL table, 'user_data', in DynamoDB '''
+        '''Create a MySQL table, 'user_data', in DynamoDB.'''
         self.table = dynamodb.create_table(
                 TableName = 'user_data',
                 KeySchema = [
@@ -58,13 +58,12 @@ class response_per_intent():
         return slot_y_n_choices
 
     def ff_questions(self, slot_y_n_choices, intent_request):
-        ''' This function handles the user queries to fact-finding case '''
+        '''Handle the user queries to fact-finding case and fallback intent.'''
         str_to_function_name={'get_firstname': get_firstname, 'get_lastname': get_lastname, 'get_phonenumber': get_phonenumber, 'get_emailaddress': get_emailaddress}
-        ''' Fallback '''
+        
         if self.intent_name == 'fallback_intent':
             return elicit_slot_without_button(self.sessattr, "contact_details", self.slots, "contactdetails", {"contentType": "PlainText", "content": full_intent_slot_message["contact_details"]["contactdetails"]})
                     
-        ''' Record contact details '''
         if self.intent_name == 'contact_details':
             if self.slots['contactdetails'] is None and 'contactdetails' not in self.sessattr:
                 return elicit_slot_without_button(self.sessattr, self.intent_name, self.slots, "contactdetails", {"contentType": "PlainText", "content": full_intent_slot_message[self.intent_name]["contactdetails"]})

@@ -8,9 +8,11 @@ client = boto3.client('lex-runtime', region_name="eu-west-1")
 logger = logging.getLogger()
   
 class response_per_intent():
-    '''
-    Handles the output from six intents, 'greet_intent', 'greet_how_are_you_intent', 'inform_bot_services_intent', 'ask_bot_name_intent' 'goodbye_intent' and 'thank_intent'
-    '''
+    '''Handle basic intents.
+    
+    Basic intents are: 'greet_intent', 'greet_how_are_you_intent',
+     'inform_bot_services_intent', 'ask_bot_name_intent',
+     'goodbye_intent' and 'thank_intent.'''
     def __init__(self, intent_request):
         self.intent_name = intent_request['currentIntent']['name']
         self.sessattr = get_sessattr(intent_request)
@@ -18,10 +20,7 @@ class response_per_intent():
             self.sessattr = dict()
             
     def intent_name_responses(self):
-        '''
-        Returns:
-            dict: dictionary with sesssion attricutes, message and buttons displaying slot choices
-        '''
+        '''Return json output for the six basic intents.'''
         if self.intent_name == 'greet_intent':
             return elicit_intent(self.sessattr, {"contentType":"PlainText", "content": "Hello, I can help you with the following services today. Please select from these."}, buttons_practype_initial_options)
     
@@ -44,7 +43,7 @@ class response_per_intent():
 def lambda_handler(event, context):
     '''
         Arguments:
-    intent_request: contains request data from lex in JSON format.
+        intent_request: contains request data from lex in JSON format.
     '''
     rpi = response_per_intent(event)
     return rpi.intent_name_responses()

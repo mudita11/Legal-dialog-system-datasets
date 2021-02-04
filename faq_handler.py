@@ -101,7 +101,7 @@ def posttext(bot_Name, bot_Alias, user_Id, input_Text, sessattr):
     return response
             
 class response_per_intent():
-    ''' This class handle faq use case to answer user queries in multiple services. '''
+    '''Handle faq use case to answer user queries in multiple services.'''
     def __init__(self, intent_request):
         self.slots = get_slots(intent_request)
         self.intent_name = intent_request['currentIntent']['name']
@@ -113,7 +113,7 @@ class response_per_intent():
         self.ind = None
     
     def retrieve_faq_actual_intent_name(self):
-        ''' This retrieves answer from FAQ_legal bot using PostText call. '''
+        '''Retrieve answer from FAQ_legal bot using PostText call.'''
         actual_intent_name = None
         if self.intent_name == 'all_faq':
             if self.inputtext not in practice_list:
@@ -134,7 +134,7 @@ class response_per_intent():
         return actual_intent_name
         
     def resp_user_choice_general_info(self, actual_intent_name):
-        ''' This function deals with 'how about <service name>' kind of text '''
+        '''Handle 'how about <service name>' kind of text.'''
         if actual_intent_name == 'user_choice_to_general_info_intent':
             if self.slots['practicetype'] is not None:
                 if self.slots['practicetype'] in practice_map.keys():
@@ -166,7 +166,7 @@ class response_per_intent():
         return actual_intent_name
         
     def update_sessattr(self, actual_intent_name):
-        ''' Updates history data '''
+        '''Update history data.'''
         if actual_intent_name in faqpt_assignment_for_intent_with_single_message_faq.keys() or actual_intent_name in intent_with_multiple_message_faq.keys():
             self.sessattr['prev_intent'] = actual_intent_name
         if actual_intent_name == 'user_choice_to_contact_solicitor_intent' and 'practicetype' in self.sessattr:
@@ -176,13 +176,13 @@ class response_per_intent():
             self.sessattr = identify_faq_index(self.sessattr, practice_list, self.ind)
     
     def single_message_faq(self, actual_intent_name):
-        ''' This handles queries that are specific to a legal service '''
+        '''Handle queries that are specific to a legal service.'''
         # intent name independent on the type of practicetype   
         if actual_intent_name in faqpt_assignment_for_intent_with_single_message_faq.keys():
             return faq_single(self.sessattr, actual_intent_name)
     
     def assign_ind_special_cases(self, actual_intent_name):
-        ''' This handles faq queries for multiple legal service'''
+        '''Handle faq queries for multiple legal service.'''
         # assigns practicetype index for business sales and purchase, buying a biz property, selling a biz property within cost intent     
         if actual_intent_name == 'faq_cost_legalaid_intent' and self.slots['buysell'] is not None:
             if self.slots['proptype'] is None:
@@ -239,6 +239,7 @@ class response_per_intent():
         return resp
     
 def lambda_handler(event, context):
+    ''' '''
     rpi = response_per_intent(event)
     actual_intent_name = rpi.retrieve_faq_actual_intent_name()
     if isinstance(actual_intent_name, dict):
