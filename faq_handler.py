@@ -38,16 +38,8 @@ def identify_faq_index(sessattr, practice_list, ind):
     return sessattr
         
 str_to_function_name={'get_firstname': get_firstname, 'get_lastname': get_lastname, 'get_phonenumber': get_phonenumber, 'get_emailaddress': get_emailaddress}
-
-def posttext(bot_Name, bot_Alias, user_Id, input_Text, sessattr):
-    response = boto3.client('lex-runtime').post_text(botName=bot_Name,
-                                botAlias=bot_Alias,
-                                userId=user_Id,
-                                sessionAttributes=sessattr,
-                                inputText=input_Text);
-    return response
     
-def swi(intent_name, actual_intent_name, slots, sessattr, InputText, intent_request, table):
+def swi(intent_name, actual_intent_name, slots, sessattr, inputtext, intent_request, table):
     ind = sessattr['index_faq']
     if actual_intent_name == "faq_cost_legalaid_intent":
         if slots["contactdetails"] is None:
@@ -66,7 +58,7 @@ def swi(intent_name, actual_intent_name, slots, sessattr, InputText, intent_requ
                     function_name = str_to_function_name['get_'+item]
                     return function_name(sessattr, "contact_details", slots, full_intent_slot_message["contact_details"][item])
                 else:
-                    slots[item] = InputText
+                    slots[item] = inputtext
                     sessattr[item] = slots[item]
             slot_list = full_slot_list["contact_details"]
             if 'contactdetails' in sessattr:
@@ -96,24 +88,36 @@ def faq_single(sessattr, actual_intent_name):
 def general_info(sessattr):
     return close(sessattr, "Close", "Fulfilled", {"contentType": "PlainText", "content": "Sure, What would you like to know about "+sessattr['practicetype']+"?"})
 
+child_bot_name = 'FAQ_legal'
+child_bot_version = 'BetaA'
+username = 'msharma'
+
+def posttext(bot_Name, bot_Alias, user_Id, input_Text, sessattr):
+    response = boto3.client('lex-runtime').post_text(botName=bot_Name,
+                                botAlias=bot_Alias,
+                                userId=user_Id,
+                                sessionAttributes=sessattr,
+                                inputText=input_Text);
+    return response
             
 class response_per_intent():
+    ''' This class handle faq use case to answer user queries in multiple services. '''
     def __init__(self, intent_request):
         self.slots = get_slots(intent_request)
         self.intent_name = intent_request['currentIntent']['name']
         self.sessattr = get_sessattr(intent_request)
         if self.sessattr is None:
             self.sessattr = dict()
-        self.InputText = intent_request['inputTranscript']
+        self.inputtext = intent_request['inputTranscript']
         self.table = dynamodb.Table('user_data')
         self.ind = None
     
     def retrieve_faq_actual_intent_name(self):
-        ################---------------- PostText call to retrieve answer from FAQ_legal ----------------################
+        ''' This retrieves answer from FAQ_legal bot using PostText call. '''
         actual_intent_name = None
         if self.intent_name == 'all_faq':
-            if self.InputText not in practice_list:
-                response = posttext('FAQ_legal', 'BetaA', 'msharma', self.InputText, {})
+            if self.inputtext not in practice_list:
+                response = posttext(child_bot_name, child_bot_version, username, self.inputtext, {})
                 if 'intentName' in response:
                     actual_intent_name = response['intentName']
                     #set practicetype in switch_bots recognised by faq_legal bot
@@ -130,7 +134,7 @@ class response_per_intent():
         return actual_intent_name
         
     def resp_user_choice_general_info(self, actual_intent_name):
-        # to deal with 'how about..' kind of text
+        ''' This function deals with 'how about <service name>' kind of text '''
         if actual_intent_name == 'user_choice_to_general_info_intent':
             if self.slots['practicetype'] is not None:
                 if self.slots['practicetype'] in practice_map.keys():
@@ -162,6 +166,7 @@ class response_per_intent():
         return actual_intent_name
         
     def update_sessattr(self, actual_intent_name):
+        ''' Updates history data '''
         if actual_intent_name in faqpt_assignment_for_intent_with_single_message_faq.keys() or actual_intent_name in intent_with_multiple_message_faq.keys():
             self.sessattr['prev_intent'] = actual_intent_name
         if actual_intent_name == 'user_choice_to_contact_solicitor_intent' and 'practicetype' in self.sessattr:
@@ -171,13 +176,13 @@ class response_per_intent():
             self.sessattr = identify_faq_index(self.sessattr, practice_list, self.ind)
     
     def single_message_faq(self, actual_intent_name):
-        ################----------------faq-single---------------################
+        ''' This handles queries that are specific to a legal service '''
         # intent name independent on the type of practicetype   
         if actual_intent_name in faqpt_assignment_for_intent_with_single_message_faq.keys():
             return faq_single(self.sessattr, actual_intent_name)
     
     def assign_ind_special_cases(self, actual_intent_name):
-        ################----------------faq-multiple---------------################
+        ''' This handles faq queries for multiple legal service'''
         # assigns practicetype index for business sales and purchase, buying a biz property, selling a biz property within cost intent     
         if actual_intent_name == 'faq_cost_legalaid_intent' and self.slots['buysell'] is not None:
             if self.slots['proptype'] is None:
@@ -230,7 +235,7 @@ class response_per_intent():
                 self.sessattr = identify_faq_index(self.sessattr, practice_list, self.ind)
     
     def multiple_message_faq(self, actual_intent_name, intent_request):
-        resp = swi(self.intent_name, actual_intent_name, self.slots, self.sessattr, self.InputText, intent_request, self.table)
+        resp = swi(self.intent_name, actual_intent_name, self.slots, self.sessattr, self.inputtext, intent_request, self.table)
         return resp
     
 def lambda_handler(event, context):

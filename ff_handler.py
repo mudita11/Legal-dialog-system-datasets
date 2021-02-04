@@ -24,6 +24,7 @@ def posttext(bot_Name, bot_Alias, user_Id, input_Text):
 
     
 class response_per_intent():
+    ''' A class to ask questions to the user and record their contact details and case related information. '''
     def __init__(self, intent_request):
         self.slots = get_slots(intent_request)
         self.InputText = intent_request['inputTranscript']
@@ -35,6 +36,7 @@ class response_per_intent():
         self.sessattr['prev_intent'] = self.intent_name
     
     def create_dynamodb_table(self):
+        ''' This function creates a MySQL table, 'user_data', in DynamoDB '''
         self.table = dynamodb.create_table(
                 TableName = 'user_data',
                 KeySchema = [
@@ -56,11 +58,13 @@ class response_per_intent():
         return slot_y_n_choices
 
     def ff_questions(self, slot_y_n_choices, intent_request):
+        ''' This function handles the user queries to fact-finding case '''
         str_to_function_name={'get_firstname': get_firstname, 'get_lastname': get_lastname, 'get_phonenumber': get_phonenumber, 'get_emailaddress': get_emailaddress}
-        #-----------------------------------Fallback-------------------------------------------
+        ''' Fallback '''
         if self.intent_name == 'fallback_intent':
             return elicit_slot_without_button(self.sessattr, "contact_details", self.slots, "contactdetails", {"contentType": "PlainText", "content": full_intent_slot_message["contact_details"]["contactdetails"]})
                     
+        ''' Record contact details '''
         if self.intent_name == 'contact_details':
             if self.slots['contactdetails'] is None and 'contactdetails' not in self.sessattr:
                 return elicit_slot_without_button(self.sessattr, self.intent_name, self.slots, "contactdetails", {"contentType": "PlainText", "content": full_intent_slot_message[self.intent_name]["contactdetails"]})
@@ -93,7 +97,6 @@ class response_per_intent():
             else:
                 return elicit_slot_without_button(self.sessattr, self.intent_name, self.slots, "contactdetails", {"contentType": "PlainText", "content": "Please give a valid answer to the above question."})
                 
-        #-----------------------------------Commercial corporate-------------------------------------------
         if self.intent_name == 'buy_sell_intent':
             if 'practicetype' not in self.sessattr:
                 if self.slots['proptype'] is None:
@@ -209,7 +212,7 @@ class response_per_intent():
                 message1 = "Thank you for that. We have your contact details. One of our lawyers will be in touch soon. I am now transferring you to some further information which I hope you will find useful. https://www.fjg.co.uk/services/services-for-business/corporate-and-commercial/buying-selling-a-business"
                 message2 = "We have your contact details. One of the lawyers will be in touch soon. I am now transferring you to some further information which I hope you will find useful. https://www.fjg.co.uk/services/services-for-business/corporate-and-commercial/buying-selling-a-business"
         
-        
+
         if self.intent_name == 'contract_review_intent':
             self.sessattr['practicetype'] = practice_list[1]
             for item in personal_info:
@@ -270,6 +273,7 @@ class response_per_intent():
             else:
                 return elicit_slot_without_button(self.sessattr, self.intent_name, self.slots, slot_y_n_choices, {"contentType": "PlainText", "content": "Please give a valid answer to the above question."})
                 
+                
         if self.intent_name == "Employment_contracts_intent":
             self.sessattr['practicetype'] = practice_list[3]
             if self.slots[slot_y_n_choices] is None and slot_y_n_choices not in self.sessattr:
@@ -327,6 +331,7 @@ class response_per_intent():
             else:
                 return elicit_slot_without_button(self.sessattr, self.intent_name, self.slots, slot_y_n_choices, {"contentType": "PlainText", "content": "Please give a valid answer to the above question."})
                 
+                
         if self.intent_name == "Employment_policies_and_procedures_intent":
             self.sessattr['practicetype'] = practice_list[4]
             if self.slots[slot_y_n_choices] is None and slot_y_n_choices not in self.sessattr:
@@ -383,6 +388,7 @@ class response_per_intent():
                 message2 = "We have your contact details. One of our lawyers will be in touch soon. Thank you for contacting Fisher Jones Greenwood Solicitors."
             else:
                 return elicit_slot_without_button(self.sessattr, self.intent_name, self.slots, slot_y_n_choices, {"contentType": "PlainText", "content": "Please give a valid answer to the above question."})
+                
                 
         if self.intent_name == "Employment_dispute_make_claim":
             self.sessattr['practicetype'] = practice_list[5]
@@ -443,6 +449,7 @@ class response_per_intent():
             else:
                 return elicit_slot_without_button(self.sessattr, self.intent_name, self.slots, slot_y_n_choices, {"contentType": "PlainText", "content": "Please give a valid answer to the above question."})
                 
+                
         if self.intent_name == "Employment_dispute_receive_claim":
             self.sessattr['practicetype'] = practice_list[6]
             if self.slots[slot_y_n_choices] is None and slot_y_n_choices not in self.sessattr:
@@ -492,6 +499,7 @@ class response_per_intent():
             else:
                 return elicit_slot_without_button(self.sessattr, self.intent_name, self.slots, slot_y_n_choices, {"contentType": "PlainText", "content": "Please give a valid answer to the above question."})
                 
+                
         if self.intent_name == "Employment_settlement_agreement":
             self.sessattr['practicetype'] = practice_list[7]
             if self.slots[slot_y_n_choices] is None and slot_y_n_choices not in self.sessattr:
@@ -540,6 +548,7 @@ class response_per_intent():
                 message2 = "We have your contact details. One of our lawyers will be in touch soon. Thank you for contacting Fisher Jones Greenwood Solicitors."
             else:
                 return elicit_slot_without_button(self.sessattr, self.intent_name, self.slots, slot_y_n_choices, {"contentType": "PlainText", "content": "Please give a valid answer to the above question."})
+                
                 
         if self.intent_name == "NDA":
             self.sessattr['practicetype'] = practice_list[8]
@@ -614,6 +623,7 @@ class response_per_intent():
             else:
                 return elicit_slot_without_button(self.sessattr, self.intent_name, self.slots, slot_y_n_choices, {"contentType": "PlainText", "content": "Please give a valid answer to the above question."})
                 
+                
         if self.intent_name == "SHD_incorporate_new_company":
             self.sessattr['practicetype'] = practice_list[9]
             if self.slots['shdreason'] is not None:
@@ -651,7 +661,6 @@ class response_per_intent():
             message2 = "We have your contact details. One of the lawyers will be in touch soon. Thank you for contacting Fisher Jones Greenwood Solicitors."
             
             
-        #------------------------------------Commercial property-----------------------------------------
         if self.intent_name == "Commercial_lease_acting_for_landlord":
             self.sessattr['practicetype'] = practice_list[10]
             if self.slots['tenant_landlord'] is None and 'tenant_landlord' not in self.sessattr:
@@ -710,7 +719,7 @@ class response_per_intent():
             else:
                 return elicit_slot_without_button(self.sessattr, self.intent_name, self.slots, slot_y_n_choices, {"contentType": "PlainText", "content": "Please give a valid answer to the above question."})
 
-        #------------------------------------Dispute Resolution-----------------------------------------
+    
         if self.intent_name == "Personal_injury":
             self.sessattr['practicetype'] = practice_list[13]
             if self.slots[slot_y_n_choices] == None and slot_y_n_choices not in self.sessattr:
@@ -800,7 +809,7 @@ class response_per_intent():
             else:
                 return elicit_slot_without_button(self.sessattr, self.intent_name, self.slots, slot_y_n_choices, {"contentType": "PlainText", "content": "Please give a valid answer to the above question."})
                     
-        #------------------------------------Wills, lasting power of attorney-----------------------------------------    
+        
         if self.intent_name == "Wills_fact_finding_intent":
             self.sessattr['practicetype'] = practice_list[14]
             if self.slots[slot_y_n_choices] is None and slot_y_n_choices not in self.sessattr:
@@ -898,7 +907,7 @@ class response_per_intent():
             message1 = "Thank you for that. We have your contact details. One of our lawyers will be in touch soon."
             message2 = "We have your contact details. One of the lawyers will be in touch soon."
             
-        #------------------------------------Immigration-----------------------------------------            
+              
         if self.intent_name == "Immigration":
             self.sessattr['practicetype'] = practice_list[19]
             if self.slots['curr_residence'] is not None:

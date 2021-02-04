@@ -9,7 +9,7 @@ logger = logging.getLogger()
   
 class response_per_intent():
     '''
-    Handles the output from six intents recognised by the bot, 'greet_intent', 'greet_how_are_you_intent', 'inform_bot_services_intent', 'ask_bot_name_intent' 'goodbye_intent' and 'thank_intent'
+    Handles the output from six intents, 'greet_intent', 'greet_how_are_you_intent', 'inform_bot_services_intent', 'ask_bot_name_intent' 'goodbye_intent' and 'thank_intent'
     '''
     def __init__(self, intent_request):
         self.intent_name = intent_request['currentIntent']['name']
