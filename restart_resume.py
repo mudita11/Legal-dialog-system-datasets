@@ -23,9 +23,11 @@ from faq_data_store import (faqpt_assignment_for_intent_with_single_message_faq,
 logger = logging.getLogger()
                         
 def faq_single(sessattr, intent_with_single_message_faq, switch_to_intent):
+    '''Return response for user faq query when resumed.'''
     return close(sessattr, "Close", "Fulfilled", {"contentType": "PlainText", "content": intent_with_single_message_faq[switch_to_intent]})
 
 def faq_multiple(sessattr, intent_with_multiple_message_faq, switch_to_intent, slots):
+    '''Return response for user ff query when resumed.'''
     ind = int(sessattr['index_faq'])
     if switch_to_intent == 'faq_who_executer_beneficiary_attorney' and ind == 14:
         if sessattr['exebeneatt'].lower() == 'executor':
@@ -43,9 +45,11 @@ def faq_multiple(sessattr, intent_with_multiple_message_faq, switch_to_intent, s
     return close(sessattr, "Close", "Fulfilled", {"contentType": "PlainText", "content": intent_with_multiple_message_faq[switch_to_intent][ind]})
     
 def general_info(sessattr):
+    '''Return response for user enquiry for a particular service (practicetype) when resumed.'''
     return close(sessattr, "Close", "Fulfilled", {"contentType": "PlainText", "content": "Sure, What would you like to know about "+sessattr['practicetype']+"?"})
     
 def slot_not_filled_return(output_session_attributes):
+    '''Identify slots not stored in session history.'''
     return elicit_intent(output_session_attributes, {"contentType": "PlainText", "content": "What else can I help you with today? Please select from these."}, buttons_practype_initial_options)
                                                                             
 def fact_finding_without_y_n_resconv_no(output_session_attributes, slots, switch_to_intent):
@@ -223,7 +227,7 @@ class response_per_intent():
                 if switch_to_intent == "fallback_intent":
                     return elicit_slot_without_button(self.sessattr, "contact_details", self.slots, "contactdetails", {"contentType": "PlainText", "content": "I would need your contact details for someone from the firm to contact you. Are you happy to give your contact details? (Yes/No)"})
                 
-                ''' fact-finding intents without yes and no slots '''
+                # fact-finding intents without yes and no slots
                 if switch_to_intent == 'buy_sell_intent':
                     if self.sessattr['practicetype'].lower() == 'business sales and purchase':
                         return fact_finding_without_y_n_resconv_no(self.sessattr, self.slots, switch_to_intent)
@@ -233,7 +237,7 @@ class response_per_intent():
                 elif switch_to_intent in intent_without_y_n_slot:
                     return fact_finding_without_y_n_resconv_no(self.sessattr, self.slots, switch_to_intent)
                 
-                ''' fact-finding intents with yes and no slots '''
+                #fact-finding intents with yes and no slots
                 elif switch_to_intent in intent_with_y_n_slot:
                     return fact_finding_with_y_n_resconv_no(self.sessattr, self.slots, switch_to_intent)
                     
