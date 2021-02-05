@@ -28,7 +28,7 @@ class response_per_intent():
     def __init__(self, intent_request):
         '''Construct all the necessary attributes for the response_per_intent object.'''
         self.slots = get_slots(intent_request)
-        self.InputText = intent_request['inputTranscript']
+        self.inputtext = intent_request['inputTranscript']
         self.intent_name = intent_request['currentIntent']['name']
         self.table = dynamodb.Table('user_data')
         self.sessattr = get_sessattr(intent_request)
@@ -83,13 +83,13 @@ class response_per_intent():
                         function_name = str_to_function_name['get_'+item]
                         return function_name(self.sessattr, self.intent_name, self.slots, full_intent_slot_message[self.intent_name][item])
                     else:
-                        self.slots[item] = self.InputText
+                        self.slots[item] = self.inputtext
                         self.sessattr[item] = self.slots[item]
                 if 'casedesc' not in self.sessattr:
                     self.sessattr['casedesc'] = 'to_be_filled'
                     return get_casedesc(self.sessattr, self.intent_name, self.slots, full_intent_slot_message[self.intent_name]['casedesc'])
                 if self.sessattr['casedesc'] == 'to_be_filled':
-                    self.slots['casedesc'] = self.InputText
+                    self.slots['casedesc'] = self.inputtext
                     self.sessattr['casedesc'] = self.slots['casedesc']
                 slot_list = full_slot_list[self.intent_name]
                 del self.sessattr['contactdetails']
@@ -138,7 +138,7 @@ class response_per_intent():
                             function_name = str_to_function_name['get_'+item]
                             return function_name(self.sessattr, self.intent_name, self.slots, full_intent_slot_message['buy_sell_intent'][key_name+'_1'][item])
                         elif self.sessattr[item] == 'to_be_filled':
-                            self.slots[item] = self.InputText
+                            self.slots[item] = self.inputtext
                             self.sessattr[item] = self.slots[item]
                     slot_list = full_slot_list['buy_sell_intent'][key_name+'_1']
                     message1 = "Thank you. We have your contact details. One of the lawyers will be in touch soon. Thank you for contacting Fisher Jones Greenwood Solicitors."
@@ -152,7 +152,7 @@ class response_per_intent():
                             function_name = str_to_function_name['get_'+item]
                             return function_name(self.sessattr, self.intent_name, self.slots, full_intent_slot_message['buy_sell_intent'][key_name+'_2'][item])
                         elif self.sessattr[item] == 'to_be_filled':
-                            self.slots[item] = self.InputText
+                            self.slots[item] = self.inputtext
                             self.sessattr[item] = self.slots[item]
                     slot_list = full_slot_list['buy_sell_intent'][key_name+'_2']
                     message1 = "Thank you. We have your contact details. One of the lawyers will be in touch soon. Thank you for contacting Fisher Jones Greenwood Solicitors."
@@ -175,7 +175,7 @@ class response_per_intent():
                             function_name = str_to_function_name['get_'+item]
                             return function_name(self.sessattr, self.intent_name, self.slots, full_intent_slot_message['buy_sell_intent'][key_name+'_1'][item])
                         elif self.sessattr[item] == 'to_be_filled':
-                            self.slots[item] = self.InputText
+                            self.slots[item] = self.inputtext
                             self.sessattr[item] = self.slots[item]
                     slot_list = full_slot_list['buy_sell_intent'][key_name+'_1']
                     message1 = "Thank you. We have your contact details. Someone from the firm will contact you Thank you for contacting Fisher Jones Greenwood Solicitors."
@@ -189,7 +189,7 @@ class response_per_intent():
                             function_name = str_to_function_name['get_'+item]
                             return function_name(self.sessattr, self.intent_name, self.slots, full_intent_slot_message['buy_sell_intent'][key_name+'_2'][item])
                         elif self.sessattr[item] == 'to_be_filled':
-                            self.slots[item] = self.InputText
+                            self.slots[item] = self.inputtext
                             self.sessattr[item] = self.slots[item]
                     slot_list = full_slot_list['buy_sell_intent'][key_name+'_2']
                     message1 = "Thank you. We have your contact details. One of the lawyers will be in touch soon. Thank you for contacting Fisher Jones Greenwood Solicitors."
@@ -207,7 +207,7 @@ class response_per_intent():
                         function_name = str_to_function_name['get_'+item]
                         return function_name(self.sessattr, self.intent_name, self.slots, full_intent_slot_message['buy_sell_intent'][key_name][item])
                     elif self.sessattr[item] == 'to_be_filled':
-                        self.slots[item] = self.InputText
+                        self.slots[item] = self.inputtext
                         self.sessattr[item] = self.slots[item]
                 slot_list = full_slot_list['buy_sell_intent'][key_name]
                 message1 = "Thank you for that. We have your contact details. One of our lawyers will be in touch soon. I am now transferring you to some further information which I hope you will find useful. https://www.fjg.co.uk/services/services-for-business/corporate-and-commercial/buying-selling-a-business"
@@ -224,13 +224,13 @@ class response_per_intent():
                     function_name = str_to_function_name['get_'+item]
                     return function_name(self.sessattr, self.intent_name, self.slots, full_intent_slot_message[self.intent_name][item])
                 elif self.sessattr[item] == 'to_be_filled':
-                    self.slots[item] = self.InputText
+                    self.slots[item] = self.inputtext
                     self.sessattr[item] = self.slots[item]
             if 'contsort' not in self.sessattr:
                 self.sessattr['contsort'] = 'to_be_filled'
                 return get_contsort(self.sessattr, self.intent_name, self.slots, full_intent_slot_message[self.intent_name]['contsort'])
             elif self.sessattr['contsort'] == 'to_be_filled':
-                self.slots['contsort'] = self.InputText
+                self.slots['contsort'] = self.inputtext
                 self.sessattr['contsort'] = self.slots['contsort']
             slot_list = full_slot_list[self.intent_name]
             message1 = "Thank you, we have your contact details. If you are able to could you please email the contract to commercial@fjg.co.uk. When we have reviewed the contract we will then be in touch to discuss your requirements and we will be able to let you have a quote for the work necessary to carry out any review or amendment. You will not be committed to pay anything until after you have accepted our estimate. Thank you for contacting Fisher Jones Greenwood Solicitors."
@@ -252,7 +252,7 @@ class response_per_intent():
                         function_name = str_to_function_name['get_'+item]
                         return function_name(self.sessattr, self.intent_name, self.slots, full_intent_slot_message[self.intent_name+'_1'][item])
                     elif self.sessattr[item] == 'to_be_filled':
-                        self.slots[item] = self.InputText
+                        self.slots[item] = self.inputtext
                         self.sessattr[item] = self.slots[item]
                 slot_list = full_slot_list[self.intent_name+'_1']
                 message1 = "Thank you, we have your contact details. If you are able to could you please email the terms and conditions to commercial@fjg.co.uk and we will get back to you as soon as possible. We will then be able to give you an estimate of our fees. Typically we can update a set of terms and conditions for between £300 and £600 plus VAT. You will not be committed to paying anything until you have accepted our estimate. Thank you for contacting Fisher Jones Greenwood Solicitors."
@@ -266,7 +266,7 @@ class response_per_intent():
                         function_name = str_to_function_name['get_'+item]
                         return function_name(self.sessattr, self.intent_name, self.slots, full_intent_slot_message[self.intent_name+'_2'][item])
                     elif self.sessattr[item] == 'to_be_filled':
-                        self.slots[item] = self.InputText
+                        self.slots[item] = self.inputtext
                         self.sessattr[item] = self.slots[item]
                 slot_list = full_slot_list[self.intent_name+'_2']
                 message1 = "Thank you. We have your contact details. We will be in touch as soon as possible to talk through your requirements. We will then be able to give you an estimate of our fees. Typically we can draft a set of terms and conditions for between £300 and £600 plus VAT. You will not be committed to paying anything until you have accepted our estimate. Thank you for contacting Fisher Jones Greenwood Solicitors."
@@ -290,13 +290,13 @@ class response_per_intent():
                         function_name = str_to_function_name['get_'+item]
                         return function_name(self.sessattr, self.intent_name, self.slots, full_intent_slot_message[self.intent_name+'_1'][item])
                     elif self.sessattr[item] == 'to_be_filled':
-                        self.slots[item] = self.InputText
+                        self.slots[item] = self.inputtext
                         self.sessattr[item] = self.slots[item]
                 if 'companyname' not in self.sessattr: 
                     self.sessattr['companyname'] = 'to_be_filled'
                     return get_companyname(self.sessattr, self.intent_name, self.slots, full_intent_slot_message[self.intent_name+'_1']['companyname'])
                 elif self.sessattr['companyname'] == 'to_be_filled':
-                    self.slots['companyname'] = self.InputText
+                    self.slots['companyname'] = self.inputtext
                     self.sessattr['companyname'] = self.slots['companyname']
                 if self.slots['nofemployees'] == None and 'nofemployees' not in self.sessattr:
                     return get_nofemployees(self.sessattr, self.intent_name, self.slots, full_intent_slot_message[self.intent_name+'_1']['nofemployees'])
@@ -314,13 +314,13 @@ class response_per_intent():
                         function_name = str_to_function_name['get_'+item]
                         return function_name(self.sessattr, self.intent_name, self.slots, full_intent_slot_message[self.intent_name+'_2'][item])
                     elif self.sessattr[item] == 'to_be_filled':
-                        self.slots[item] = self.InputText
+                        self.slots[item] = self.inputtext
                         self.sessattr[item] = self.slots[item]
                 if 'companyname' not in self.sessattr:
                     self.sessattr['companyname'] = 'to_be_filled'
                     return get_companyname(self.sessattr, self.intent_name, self.slots, full_intent_slot_message[self.intent_name+'_2']['companyname'])
                 elif self.sessattr['companyname'] == 'to_be_filled':
-                    self.slots['companyname'] = self.InputText
+                    self.slots['companyname'] = self.inputtext
                     self.sessattr['companyname'] = self.slots['companyname']
                 if self.slots['nofemployees'] == None and 'nofemployees' not in self.sessattr:
                     return get_nofemployees(self.sessattr, self.intent_name, self.slots, full_intent_slot_message[self.intent_name+'_2']['nofemployees'])
@@ -348,13 +348,13 @@ class response_per_intent():
                         function_name = str_to_function_name['get_'+item]
                         return function_name(self.sessattr, self.intent_name, self.slots, full_intent_slot_message[self.intent_name+'_1'][item])
                     elif self.sessattr[item] == 'to_be_filled':
-                        self.slots[item] = self.InputText
+                        self.slots[item] = self.inputtext
                         self.sessattr[item] = self.slots[item]
                 if 'companyname' not in self.sessattr:
                     self.sessattr['companyname'] = 'to_be_filled'
                     return get_companyname(self.sessattr, self.intent_name, self.slots, full_intent_slot_message[self.intent_name+'_1']['companyname'])
                 elif self.sessattr['companyname'] == 'to_be_filled':
-                    self.slots['companyname'] = self.InputText
+                    self.slots['companyname'] = self.inputtext
                     self.sessattr['companyname'] = self.slots['companyname']
                 if self.slots['nofemployees'] == None and 'nofemployees' not in self.sessattr:
                     return get_nofemployees(self.sessattr, self.intent_name, self.slots, full_intent_slot_message[self.intent_name+'_1']['nofemployees'])
@@ -372,13 +372,13 @@ class response_per_intent():
                         function_name = str_to_function_name['get_'+item]
                         return function_name(self.sessattr, self.intent_name, self.slots, full_intent_slot_message[self.intent_name+'_2'][item])
                     elif self.sessattr[item] == 'to_be_filled':
-                        self.slots[item] = self.InputText
+                        self.slots[item] = self.inputtext
                         self.sessattr[item] = self.slots[item]
                 if 'companyname' not in self.sessattr:
                     self.sessattr['companyname'] = 'to_be_filled'
                     return get_companyname(self.sessattr, self.intent_name, self.slots, full_intent_slot_message[self.intent_name+'_2']['companyname'])
                 elif self.sessattr['companyname'] == 'to_be_filled':
-                    self.slots['companyname'] = self.InputText
+                    self.slots['companyname'] = self.inputtext
                     self.sessattr['companyname'] = self.slots['companyname']
                 if self.slots['nofemployees'] == None and 'nofemployees' not in self.sessattr:
                     return get_nofemployees(self.sessattr, self.intent_name, self.slots, full_intent_slot_message[self.intent_name+'_2']['nofemployees'])
@@ -406,13 +406,13 @@ class response_per_intent():
                         function_name = str_to_function_name['get_'+item]
                         return function_name(self.sessattr, self.intent_name, self.slots, full_intent_slot_message[self.intent_name+'_1'][item])
                     elif self.sessattr[item] == 'to_be_filled':
-                        self.slots[item] = self.InputText
+                        self.slots[item] = self.inputtext
                         self.sessattr[item] = self.slots[item]
                 if 'companyname' not in self.sessattr:
                     self.sessattr['companyname'] = 'to_be_filled'
                     return get_companyname(self.sessattr, self.intent_name, self.slots, full_intent_slot_message[self.intent_name+'_1']['companyname'])
                 elif self.sessattr['companyname'] == 'to_be_filled':
-                    self.slots['companyname'] = self.InputText
+                    self.slots['companyname'] = self.inputtext
                     self.sessattr['companyname'] = self.slots['companyname']
                 slot_list = full_slot_list[self.intent_name+'_1']
                 message1 = "Thank you. We have your contact details. We will be in touch soon. Legal fees can range depending on the complexity of the issues involved, the number of witnesses involved in the case and the legal arguments that require to be made. Typical unfair dismissal cases which are represented on from start to finish cost between £9000 plus VAT and disbursements and £25,000 plus VAT plus disbursements. You might be able to settle your claim in the early stages of a dispute and engaging in successful alternative dispute resolution can significantly reduce costs overall. Thank you for contacting Fisher Jones Greenwood Solicitors."
@@ -426,19 +426,19 @@ class response_per_intent():
                         function_name = str_to_function_name['get_'+item]
                         return function_name(self.sessattr, self.intent_name, self.slots, full_intent_slot_message[self.intent_name+'_2'][item])
                     elif self.sessattr[item] == 'to_be_filled':
-                        self.slots[item] = self.InputText
+                        self.slots[item] = self.inputtext
                         self.sessattr[item] = self.slots[item]
                 if 'companyname' not in self.sessattr:
                     self.sessattr['companyname'] = 'to_be_filled'
                     return get_companyname(self.sessattr, self.intent_name, self.slots, full_intent_slot_message[self.intent_name+'_2']['companyname'])
                 elif self.sessattr["companyname"] == 'to_be_filled': 
-                    self.slots['companyname'] = self.InputText
+                    self.slots['companyname'] = self.inputtext
                     self.sessattr['companyname'] = self.slots['companyname']
                 if 'disputestage' not in self.sessattr:
                     self.sessattr['disputestage'] = 'to_be_filled'
                     return elicit_slot_without_button(self.sessattr, self.intent_name, self.slots, "disputestage", {"contentType": "PlainText", "content": full_intent_slot_message[self.intent_name+'_2']['disputestage']})          
                 elif self.sessattr['disputestage'] == 'to_be_filled': 
-                    self.slots['disputestage'] = self.InputText
+                    self.slots['disputestage'] = self.inputtext
                     self.sessattr['disputestage'] = self.slots['disputestage']
                 if self.slots['havedocument'] == None:    
                     return elicit_slot_without_button(self.sessattr, self.intent_name, self.slots, "havedocument", {"contentType": "PlainText", "content": full_intent_slot_message[self.intent_name+'_2']['havedocument']})
@@ -466,13 +466,13 @@ class response_per_intent():
                         function_name = str_to_function_name['get_'+item]
                         return function_name(self.sessattr, self.intent_name, self.slots, full_intent_slot_message[self.intent_name+'_1'][item])
                     elif self.sessattr[item] == 'to_be_filled':
-                        self.slots[item] = self.InputText
+                        self.slots[item] = self.inputtext
                         self.sessattr[item] = self.slots[item]
                 if 'companyname' not in self.sessattr:
                     self.sessattr['companyname'] = 'to_be_filled'
                     return get_companyname(self.sessattr, self.intent_name, self.slots, full_intent_slot_message[self.intent_name+'_1']['companyname'])
                 elif self.sessattr['companyname'] == 'to_be_filled':
-                    self.slots['companyname'] = self.InputText
+                    self.slots['companyname'] = self.inputtext
                     self.sessattr['companyname'] = self.slots['companyname']
                 slot_list = full_slot_list[self.intent_name+'_1']
                 message1 = "Thank you. We have your contact details. We will be in touch soon. Legal fees can range depending on the complexity of the issues involved, the number of witnesses involved in the case and the legal arguments that require to be made. Typical unfair dismissal cases which are represented on from start to finish cost between £9000 plus VAT and disbursements and £25,000 plus VAT plus disbursements. You might be able to settle your claim in the early stages of a dispute and engaging in successful alternative dispute resolution can significantly reduce costs overall. Thank you for contacting Fisher Jones Greenwood Solicitors."
@@ -486,13 +486,13 @@ class response_per_intent():
                         function_name = str_to_function_name['get_'+item]
                         return function_name(self.sessattr, self.intent_name, self.slots, full_intent_slot_message[self.intent_name+'_2'][item])
                     elif self.sessattr[item] == 'to_be_filled':
-                        self.slots[item] = self.InputText
+                        self.slots[item] = self.inputtext
                         self.sessattr[item] = self.slots[item]
                 if 'companyname' not in self.sessattr:
                     self.sessattr['companyname'] = 'to_be_filled'
                     return get_companyname(self.sessattr, self.intent_name, self.slots, full_intent_slot_message[self.intent_name+'_2']['companyname'])
                 elif self.sessattr['companyname'] == 'to_be_filled':
-                    self.slots['companyname'] = self.InputText
+                    self.slots['companyname'] = self.inputtext
                     self.sessattr['companyname'] = self.slots['companyname']
                 slot_list = full_slot_list[self.intent_name+'_2']
                 message1 = "Thank you. We have your contact details. One of our lawyers will be in touch soon. You won't incur any charges until you have accepted any estimate given for work to be done. Thank you for contacting Fisher Jones Greenwood Solicitors."
@@ -516,13 +516,13 @@ class response_per_intent():
                         function_name = str_to_function_name['get_'+item]
                         return function_name(self.sessattr, self.intent_name, self.slots, full_intent_slot_message[self.intent_name+'_1'][item])
                     elif self.sessattr[item] == 'to_be_filled':
-                        self.slots[item] = self.InputText
+                        self.slots[item] = self.inputtext
                         self.sessattr[item] = self.slots[item]
                 if 'companyname' not in self.sessattr:
                     self.sessattr['companyname'] = 'to_be_filled'
                     return get_companyname(self.sessattr, self.intent_name, self.slots, full_intent_slot_message[self.intent_name+'_1']['companyname'])
                 elif self.sessattr['companyname'] == 'to_be_filled':
-                    self.slots['companyname'] = self.InputText
+                    self.slots['companyname'] = self.inputtext
                     self.sessattr['companyname'] = self.slots['companyname']
                 slot_list = full_slot_list[self.intent_name+'_1']
                 message1 = "Thank you. We have your contact details. We will be in touch soon. Thank you for contacting Fisher Jones Greenwood Solicitors."
@@ -536,13 +536,13 @@ class response_per_intent():
                         function_name = str_to_function_name['get_'+item]
                         return function_name(self.sessattr, self.intent_name, self.slots, full_intent_slot_message[self.intent_name+'_2'][item])
                     elif self.sessattr[item] == 'to_be_filled':
-                        self.slots[item] = self.InputText
+                        self.slots[item] = self.inputtext
                         self.sessattr[item] = self.slots[item]
                 if 'companyname' not in self.sessattr:
                     self.sessattr['companyname'] = 'to_be_filled'
                     return get_companyname(self.sessattr, self.intent_name, self.slots, full_intent_slot_message[self.intent_name+'_2']['companyname'])
                 elif self.sessattr['companyname'] == 'to_be_filled':
-                    self.slots['companyname'] = self.InputText
+                    self.slots['companyname'] = self.inputtext
                     self.sessattr['companyname'] = self.slots['companyname']
                 slot_list = full_slot_list[self.intent_name+'_2']
                 message1 = "Thank you. We have your contact details. One of our lawyers will be in touch soon. Thank you for contacting Fisher Jones Greenwood Solicitors."
@@ -566,37 +566,37 @@ class response_per_intent():
                         function_name = str_to_function_name['get_'+item]
                         return function_name(self.sessattr, self.intent_name, self.slots, full_intent_slot_message[self.intent_name+'_1'][item])
                     elif self.sessattr[item] == 'to_be_filled':
-                        self.slots[item] = self.InputText
+                        self.slots[item] = self.inputtext
                         self.sessattr[item] = self.slots[item]
                 if 'companyname' not in self.sessattr:
                     self.sessattr['companyname'] = 'to_be_filled'
                     return get_companyname(self.sessattr, self.intent_name, self.slots, full_intent_slot_message[self.intent_name+'_1']['companyname'])
                 elif self.sessattr['companyname'] == 'to_be_filled': 
-                    self.slots['companyname'] = self.InputText
+                    self.slots['companyname'] = self.inputtext
                     self.sessattr['companyname'] = self.slots['companyname']
                 if 'otherpartycompanyname' not in self.sessattr:
                     self.sessattr['otherpartycompanyname'] = 'to_be_filled'
                     return elicit_slot_without_button(self.sessattr, self.intent_name, self.slots, "otherpartycompanyname", {"contentType": "PlainText", "content": full_intent_slot_message[self.intent_name+'_1']['otherpartycompanyname']})
                 elif self.sessattr['otherpartycompanyname'] == 'to_be_filled': 
-                    self.slots['otherpartycompanyname'] = self.InputText
+                    self.slots['otherpartycompanyname'] = self.inputtext
                     self.sessattr['otherpartycompanyname'] = self.slots['otherpartycompanyname']
                 if 'otherpartyfirstname' not in self.sessattr:
                     self.sessattr['otherpartyfirstname'] = 'to_be_filled'
                     return elicit_slot_without_button(self.sessattr, self.intent_name, self.slots, "otherpartyfirstname", {"contentType": "PlainText", "content": full_intent_slot_message[self.intent_name+'_1']['otherpartyfirstname']})
                 else:
-                    self.slots['otherpartyfirstname'] = self.InputText
+                    self.slots['otherpartyfirstname'] = self.inputtext
                     self.sessattr['otherpartyfirstname'] = self.slots['otherpartyfirstname']
                 if 'otherpartylastname' not in self.sessattr:
                     self.sessattr['otherpartylastname'] = 'to_be_filled'
                     return elicit_slot_without_button(self.sessattr, self.intent_name, self.slots, "otherpartylastname", {"contentType": "PlainText", "content": full_intent_slot_message[self.intent_name+'_1']['otherpartylastname']})
                 else:
-                    self.slots['otherpartylastname'] = self.InputText
+                    self.slots['otherpartylastname'] = self.inputtext
                     self.sessattr['otherpartylastname'] = self.slots['otherpartylastname']
                 if 'projectname' not in self.sessattr:
                     self.sessattr['projectname'] = 'to_be_filled'
                     return elicit_slot_without_button(self.sessattr, self.intent_name, self.slots, "projectname", {"contentType": "PlainText", "content": full_intent_slot_message[self.intent_name+'_1']['projectname']})
                 elif self.sessattr['projectname'] == 'to_be_filled':
-                    self.slots['projectname'] = self.InputText
+                    self.slots['projectname'] = self.inputtext
                     self.sessattr['projectname'] = self.slots['projectname']
                 slot_list = full_slot_list[self.intent_name+'_1']
                 message1 = "Thank you. We have your contact details. One of the lawyers will be in touch soon. Thank you for contacting Fisher Jones Greenwood Solicitors."
@@ -610,13 +610,13 @@ class response_per_intent():
                         function_name = str_to_function_name['get_'+item]
                         return function_name(self.sessattr, self.intent_name, self.slots, full_intent_slot_message[self.intent_name+'_2'][item])
                     elif self.sessattr[item] == 'to_be_filled':
-                        self.slots[item] = self.InputText
+                        self.slots[item] = self.inputtext
                         self.sessattr[item] = self.slots[item]
                 if 'companyname' not in self.sessattr:
                     self.sessattr['companyname'] = 'to_be_filled'
                     return get_companyname(self.sessattr, self.intent_name, self.slots, full_intent_slot_message[self.intent_name+'_2']['companyname'])
                 elif self.sessattr['companyname'] == 'to_be_filled':
-                    self.slots['companyname'] = self.InputText
+                    self.slots['companyname'] = self.inputtext
                     self.sessattr['companyname'] = self.slots['companyname']
                 slot_list = full_slot_list[self.intent_name+'_2']
                 message1 = "Thank you. We have your contact details. We will be in touch soon. Thank you for contacting Fisher Jones Greenwood Solicitors."
@@ -633,7 +633,7 @@ class response_per_intent():
                 self.sessattr['shdreason'] = 'to_be_filled'
                 return get_shdreason(self.sessattr, self.intent_name, self.slots, full_intent_slot_message[self.intent_name]['shdreason'], buttons_shareholders_agreement)
             elif self.sessattr['shdreason'] == 'to_be_filled':
-                self.slots['shdreason'] = self.InputText
+                self.slots['shdreason'] = self.inputtext
                 self.sessattr['shdreason'] = self.slots['shdreason']
             for item in personal_info:
                 if self.slots[item] is not None:
@@ -643,19 +643,19 @@ class response_per_intent():
                     function_name = str_to_function_name['get_'+item]
                     return function_name(self.sessattr, self.intent_name, self.slots, full_intent_slot_message[self.intent_name][item])
                 elif self.sessattr[item] == 'to_be_filled':
-                    self.slots[item] = self.InputText
+                    self.slots[item] = self.inputtext
                     self.sessattr[item] = self.slots[item]
             if 'companyname' not in self.sessattr:
                 self.sessattr['companyname'] = 'to_be_filled'
                 return get_companyname(self.sessattr, self.intent_name, self.slots, full_intent_slot_message[self.intent_name]['companyname'])
             elif self.sessattr['companyname'] == 'to_be_filled':
-                self.slots['companyname'] = self.InputText
+                self.slots['companyname'] = self.inputtext
                 self.sessattr['companyname'] = self.slots['companyname']
             if 'agreementfocus' not in self.sessattr:
                 self.sessattr['agreementfocus'] = 'to_be_filled'
                 return elicit_slot_without_button(self.sessattr, self.intent_name, self.slots, "agreementfocus", {"contentType": "PlainText", "content": full_intent_slot_message[self.intent_name]['agreementfocus']})
             elif self.sessattr['agreementfocus'] == 'to_be_filled': 
-                self.slots['agreementfocus'] = self.InputText
+                self.slots['agreementfocus'] = self.inputtext
                 self.sessattr['agreementfocus'] = self.slots['agreementfocus']
             slot_list = full_slot_list[self.intent_name]
             message1 = "Thank you. We have your contact details. One of the lawyers will be in touch soon. Thank you for contacting Fisher Jones Greenwood Solicitors."
@@ -680,7 +680,7 @@ class response_per_intent():
                     self.slots['comm_private_property'] = 'to_be_filled'
                     return elicit_slot(self.sessattr, self.intent_name, self.slots, "comm_private_property", {"contentType": "PlainText", "content": full_intent_slot_message[self.intent_name+'_1']['comm_private_property']}, commercial_private_lease_button)
                 elif self.slots['comm_private_property'] == 'to_be_filled':
-                    self.slots['comm_private_property'] = self.InputText
+                    self.slots['comm_private_property'] = self.inputtext
                 else:
                     self.sessattr['comm_private_property'] = self.slots['comm_private_property']
                 for item in personal_info:
@@ -691,7 +691,7 @@ class response_per_intent():
                         function_name = str_to_function_name['get_'+item]
                         return function_name(self.sessattr, self.intent_name, self.slots, full_intent_slot_message[self.intent_name+'_1'][item])
                     elif self.sessattr[item] == 'to_be_filled':
-                        self.slots[item] = self.InputText
+                        self.slots[item] = self.inputtext
                         self.sessattr[item] = self.slots[item]
                 slot_list = full_slot_list[self.intent_name+'_1']
                 message1 = "Thank you. We have your contact details. One of the lawyers will be in touch soon. Thank you for contacting Fisher Jones Greenwood Solicitors."
@@ -701,7 +701,7 @@ class response_per_intent():
                     self.slots['comm_private_property'] = 'to_be_filled'
                     return elicit_slot(self.sessattr, self.intent_name, self.slots, "comm_private_property", {"contentType": "PlainText", "content": full_intent_slot_message[self.intent_name+'_2']['comm_private_property']}, commercial_private_lease_button)
                 elif self.slots['comm_private_property'] == 'to_be_filled':
-                    self.slots['comm_private_property'] = self.InputText
+                    self.slots['comm_private_property'] = self.inputtext
                 else:
                     self.sessattr['comm_private_property'] = self.slots['comm_private_property']
                 for item in personal_info:
@@ -712,7 +712,7 @@ class response_per_intent():
                         function_name = str_to_function_name['get_'+item]
                         return function_name(self.sessattr, self.intent_name, self.slots, full_intent_slot_message[self.intent_name+'_2'][item])
                     elif self.sessattr[item] == 'to_be_filled':
-                        self.slots[item] = self.InputText
+                        self.slots[item] = self.inputtext
                         self.sessattr[item] = self.slots[item]
                 slot_list = full_slot_list[self.intent_name+'_2']
                 message1 = "Thank you. We have your contact details. One of the lawyers will be in touch soon. Thank you for contacting Fisher Jones Greenwood Solicitors."
@@ -741,13 +741,13 @@ class response_per_intent():
                             function_name = str_to_function_name['get_'+item]
                             return function_name(self.sessattr, self.intent_name, self.slots, full_intent_slot_message[self.intent_name+'_1'][item])
                         elif self.sessattr[item] == 'to_be_filled':
-                            self.slots[item] = self.InputText
+                            self.slots[item] = self.inputtext
                             self.sessattr[item] = self.slots[item]
                     if 'casedesc' not in self.sessattr:
                         self.sessattr['casedesc'] = 'to_be_filled'
                         return get_casedesc(self.sessattr, self.intent_name, self.slots, full_intent_slot_message[self.intent_name+'_1']['casedesc'])
                     if self.sessattr['casedesc'] == 'to_be_filled':
-                        self.slots['casedesc'] = self.InputText
+                        self.slots['casedesc'] = self.inputtext
                         self.sessattr['casedesc'] = self.slots['casedesc']
                     slot_list = full_slot_list[self.intent_name+'_1']
                     message1 = "Thank you. We have your contact details. One of our lawyers will be in touch soon. Thank you for contacting Fisher Jones Greenwood Solicitors."
@@ -761,13 +761,13 @@ class response_per_intent():
                             function_name = str_to_function_name['get_'+item]
                             return function_name(self.sessattr, self.intent_name, self.slots, full_intent_slot_message[self.intent_name+'_2'][item])
                         elif self.sessattr[item] == 'to_be_filled':
-                            self.slots[item] = self.InputText
+                            self.slots[item] = self.inputtext
                             self.sessattr[item] = self.slots[item]
                     if 'casedesc' not in self.sessattr:
                         self.sessattr['casedesc'] = 'to_be_filled'
                         return get_casedesc(self.sessattr, self.intent_name, self.slots, full_intent_slot_message[self.intent_name+'_2']['casedesc'])
                     if self.sessattr['casedesc'] == 'to_be_filled':
-                        self.slots['casedesc'] = self.InputText
+                        self.slots['casedesc'] = self.inputtext
                         self.sessattr['casedesc'] = self.slots['casedesc']
                     slot_list = full_slot_list[self.intent_name+'_1']
                     message1 = "Thank you. We have your contact details. One of our lawyers will be in touch soon. Thank you for contacting Fisher Jones Greenwood Solicitors."
@@ -786,7 +786,7 @@ class response_per_intent():
                             function_name = str_to_function_name['get_'+item]
                             return function_name(self.sessattr, self.intent_name, self.slots, full_intent_slot_message[self.intent_name+'_3'][item])
                         elif self.sessattr[item] == 'to_be_filled':
-                            self.slots[item] = self.InputText
+                            self.slots[item] = self.inputtext
                             self.sessattr[item] = self.slots[item]
                     slot_list = full_slot_list[self.intent_name+'_2']
                     message1 = "Thank you. We have your contact details. One of our lawyers will be in touch soon. Thank you for contacting Fisher Jones Greenwood Solicitors."
@@ -800,7 +800,7 @@ class response_per_intent():
                             function_name = str_to_function_name['get_'+item]
                             return function_name(self.sessattr, self.intent_name, self.slots, full_intent_slot_message[self.intent_name+'_4'][item])
                         elif self.sessattr[item] == 'to_be_filled':
-                            self.slots[item] = self.InputText
+                            self.slots[item] = self.inputtext
                             self.sessattr[item] = self.slots[item]
                     slot_list = full_slot_list[self.intent_name+'_2']
                     message1 = "Thank you. We have your contact details. One of our lawyers will be in touch soon. Thank you for contacting Fisher Jones Greenwood Solicitors."
@@ -828,7 +828,7 @@ class response_per_intent():
                         function_name = str_to_function_name['get_'+item]
                         return function_name(self.sessattr, self.intent_name, self.slots, full_intent_slot_message[self.intent_name+'_2'][item])
                     elif self.sessattr[item] == 'to_be_filled':
-                        self.slots[item] = self.InputText
+                        self.slots[item] = self.inputtext
                         self.sessattr[item] = self.slots[item]
                 slot_list = full_slot_list[self.intent_name+'_2']
                 message1 = "Thank you for that. We have your contact details. One of our lawyers will be in touch soon."
@@ -854,7 +854,7 @@ class response_per_intent():
                     function_name = str_to_function_name['get_'+item]
                     return function_name(self.sessattr, self.intent_name, self.slots, full_intent_slot_message[self.intent_name][item])
                 elif self.sessattr[item] == 'to_be_filled':
-                    self.slots[item] = self.InputText
+                    self.slots[item] = self.inputtext
                     self.sessattr[item] = self.slots[item]
             slot_list = full_slot_list[self.intent_name]
             message1 = "Thank you for that. We have your contact details. One of our lawyers will be in touch soon."
@@ -870,7 +870,7 @@ class response_per_intent():
                     function_name = str_to_function_name['get_'+item]
                     return function_name(self.sessattr, self.intent_name, self.slots, full_intent_slot_message[self.intent_name][item])
                 elif self.sessattr[item] == 'to_be_filled':
-                    self.slots[item] = self.InputText
+                    self.slots[item] = self.inputtext
                     self.sessattr[item] = self.slots[item]
             slot_list = full_slot_list[self.intent_name]
             message1 = "Thank you for that. We have your contact details. One of our lawyers will be in touch soon."
@@ -886,7 +886,7 @@ class response_per_intent():
                     function_name = str_to_function_name['get_'+item]
                     return function_name(self.sessattr, self.intent_name, self.slots, full_intent_slot_message[self.intent_name][item])
                 elif self.sessattr[item] == 'to_be_filled':
-                    self.slots[item] = self.InputText
+                    self.slots[item] = self.inputtext
                     self.sessattr[item] = self.slots[item]
             slot_list = full_slot_list[self.intent_name]
             message1 = "Thank you for that. We have your contact details. One of our lawyers will be in touch soon."
@@ -902,7 +902,7 @@ class response_per_intent():
                     function_name = str_to_function_name['get_'+item]
                     return function_name(self.sessattr, self.intent_name, self.slots, full_intent_slot_message[self.intent_name][item])
                 elif self.sessattr[item] == 'to_be_filled':
-                    self.slots[item] = self.InputText
+                    self.slots[item] = self.inputtext
                     self.sessattr[item] = self.slots[item]
             slot_list = full_slot_list[self.intent_name]
             message1 = "Thank you for that. We have your contact details. One of our lawyers will be in touch soon."
@@ -917,7 +917,7 @@ class response_per_intent():
                 self.sessattr['curr_residence'] = 'to_be_filled'
                 return elicit_slot_without_button(self.sessattr, self.intent_name, self.slots, "curr_residence", {"contentType": "PlainText", "content": full_intent_slot_message[self.intent_name]['curr_residence']})
             elif self.sessattr['curr_residence'] == 'to_be_filled':
-                self.slots['curr_residence'] = self.InputText
+                self.slots['curr_residence'] = self.inputtext
                 self.sessattr['curr_residence'] = self.slots['curr_residence']
             if self.slots["type_visa"] is None and 'type_visa' not in self.sessattr:
                 return elicit_slot(self.sessattr, self.intent_name, self.slots, "type_visa", {"contentType": "PlainText", "content": full_intent_slot_message[self.intent_name]['type_visa']}, buttons_type_visa)
@@ -931,7 +931,7 @@ class response_per_intent():
                     function_name = str_to_function_name['get_'+item]
                     return function_name(self.sessattr, self.intent_name, self.slots, full_intent_slot_message[self.intent_name][item])
                 elif self.sessattr[item] == 'to_be_filled':
-                    self.slots[item] = self.InputText
+                    self.slots[item] = self.inputtext
                     self.sessattr[item] = self.slots[item]
             slot_list = full_slot_list[self.intent_name]
             message1 = "Thank you for that. We have your contact details. One of our lawyers will be in touch soon in order that we can discuss this matter with you in more depth. \
