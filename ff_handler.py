@@ -24,8 +24,9 @@ def posttext(bot_Name, bot_Alias, user_Id, input_Text):
 
     
 class response_per_intent():
-    '''Ask questions to the user and record their contact details and case related information.'''
+    '''Ask questions to the user and record their contact details and case related information specific to a service.'''
     def __init__(self, intent_request):
+        '''Construct all the necessary attributes for the response_per_intent object.'''
         self.slots = get_slots(intent_request)
         self.InputText = intent_request['inputTranscript']
         self.intent_name = intent_request['currentIntent']['name']
@@ -51,6 +52,7 @@ class response_per_intent():
                 )
     
     def find_slot_in_y_n_intent_slot(self):
+        '''Find slot with yes and no choices.'''
         if self.intent_name not in intent_without_y_n_slot and self.intent_name != 'buy_sell_intent':
             slot_y_n_choices = full_slot_list[self.intent_name+'_1'][-1]
         else:
@@ -942,6 +944,7 @@ class response_per_intent():
 
         
 def lambda_handler(event, context):
+    '''Create response_per_intent class objects and calls class methods.'''
     rpi = response_per_intent(event)
     slot_y_n_choices = rpi.find_slot_in_y_n_intent_slot()
     return rpi.ff_questions(slot_y_n_choices, event)

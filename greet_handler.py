@@ -14,6 +14,7 @@ class response_per_intent():
      'inform_bot_services_intent', 'ask_bot_name_intent',
      'goodbye_intent' and 'thank_intent.'''
     def __init__(self, intent_request):
+        '''Construct all the necessary attributes for the response_per_intent object.'''
         self.intent_name = intent_request['currentIntent']['name']
         self.sessattr = get_sessattr(intent_request)
         if self.sessattr is None:
@@ -42,6 +43,8 @@ class response_per_intent():
             
 def lambda_handler(event, context):
     '''
+    Create response_per_intent class objects and calls class methods.
+    
         Arguments:
         intent_request: contains request data from lex in JSON format.
     '''

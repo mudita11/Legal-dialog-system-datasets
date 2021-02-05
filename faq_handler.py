@@ -29,6 +29,7 @@ dynamodb = boto3.resource('dynamodb', region_name = 'eu-west-1')
 logger = logging.getLogger()
   
 def identify_faq_index(sessattr, practice_list, ind):
+    '''Assign service type index.'''
     if sessattr['practicetype'] in practice_map.keys():
         practise_type = practice_map[sessattr['practicetype']]
         sessattr['practicetype'] = practise_type
@@ -40,6 +41,7 @@ def identify_faq_index(sessattr, practice_list, ind):
 str_to_function_name={'get_firstname': get_firstname, 'get_lastname': get_lastname, 'get_phonenumber': get_phonenumber, 'get_emailaddress': get_emailaddress}
     
 def swi(intent_name, actual_intent_name, slots, sessattr, inputtext, intent_request, table):
+    '''Return response to the user'''
     ind = sessattr['index_faq']
     if actual_intent_name == "faq_cost_legalaid_intent":
         if slots["contactdetails"] is None:
@@ -103,6 +105,7 @@ def posttext(bot_Name, bot_Alias, user_Id, input_Text, sessattr):
 class response_per_intent():
     '''Handle faq use case to answer user queries in multiple services.'''
     def __init__(self, intent_request):
+        '''Construct all the necessary attributes for the response_per_intent object.'''
         self.slots = get_slots(intent_request)
         self.intent_name = intent_request['currentIntent']['name']
         self.sessattr = get_sessattr(intent_request)
@@ -182,7 +185,7 @@ class response_per_intent():
             return faq_single(self.sessattr, actual_intent_name)
     
     def assign_ind_special_cases(self, actual_intent_name):
-        '''Handle faq queries for multiple legal service.'''
+        '''Handle faq special cases applicable to multiple legal service.'''
         # assigns practicetype index for business sales and purchase, buying a biz property, selling a biz property within cost intent     
         if actual_intent_name == 'faq_cost_legalaid_intent' and self.slots['buysell'] is not None:
             if self.slots['proptype'] is None:
@@ -235,11 +238,12 @@ class response_per_intent():
                 self.sessattr = identify_faq_index(self.sessattr, practice_list, self.ind)
     
     def multiple_message_faq(self, actual_intent_name, intent_request):
+        '''Handle special cases for faq queries applicable to multiple legal service.'''
         resp = swi(self.intent_name, actual_intent_name, self.slots, self.sessattr, self.inputtext, intent_request, self.table)
         return resp
     
 def lambda_handler(event, context):
-    ''' '''
+    '''Create response_per_intent class objects and calls class methods.'''
     rpi = response_per_intent(event)
     actual_intent_name = rpi.retrieve_faq_actual_intent_name()
     if isinstance(actual_intent_name, dict):

@@ -46,10 +46,10 @@ def general_info(sessattr):
     return close(sessattr, "Close", "Fulfilled", {"contentType": "PlainText", "content": "Sure, What would you like to know about "+sessattr['practicetype']+"?"})
     
 def slot_not_filled_return(output_session_attributes):
-    return elicit_intent(output_session_attributes, {"contentType": "PlainText", "content": "What else can I help you with today? Please select from these."}, 
-                                                buttons_practype_initial_options)
+    return elicit_intent(output_session_attributes, {"contentType": "PlainText", "content": "What else can I help you with today? Please select from these."}, buttons_practype_initial_options)
                                                                             
 def fact_finding_without_y_n_resconv_no(output_session_attributes, slots, switch_to_intent):
+        '''Handle fact-finding intents without yes and no choices after user chooses to resume the session.'''
         slots_not_filled = []
         if switch_to_intent == 'buy_sell_intent':
             lookup_slot_list = full_slot_list['buy_sell_intent'][practice_list_map_intent[output_session_attributes['practicetype'].lower()]]
@@ -70,6 +70,7 @@ def fact_finding_without_y_n_resconv_no(output_session_attributes, slots, switch
         return elicit_slot_without_button(output_session_attributes, switch_to_intent, slots, first_slot_to_be_filled, {"contentType": "PlainText", "content": message[first_slot_to_be_filled]})
 
 def get_slots_not_filled(lookup_slot_list, plmi, output_session_attributes, suffix):
+    '''Lookup for slots in an intent not stored in history.'''
     slots_not_filled = []
     for item in lookup_slot_list[plmi+suffix]:
         if item not in output_session_attributes.keys():
@@ -79,6 +80,7 @@ def get_slots_not_filled(lookup_slot_list, plmi, output_session_attributes, suff
     return slots_not_filled
 
 def fact_finding_with_y_n_resconv_no(output_session_attributes, slots, switch_to_intent):
+        '''Handle fact-finding intents with yes and no choices after user chooses to resume the session.'''
         if switch_to_intent == 'buy_sell_intent':
             plmi = practice_list_map_intent[output_session_attributes['practicetype'].lower()]
             lookup_slot_list = full_slot_list['buy_sell_intent']
@@ -157,11 +159,14 @@ def fact_finding_with_y_n_resconv_no(output_session_attributes, slots, switch_to
 
     
 def elicit_intent_initial_options(sessattr, message):
+    '''Return two use cases as the choice options to the user.'''
     return elicit_intent(sessattr, {"contentType": "PlainText", "content": message}, buttons_practype_initial_options)
 
 
 class response_per_intent():
+    '''Handle restart and resume for two user cases with multiple services.'''
     def __init__(self, intent_request):
+        '''Construct all the necessary attributes for the response_per_intent object.'''
         self.slots = get_slots(intent_request)
         self.intent_name = intent_request['currentIntent']['name']
         self.sessattr = get_sessattr(intent_request)
@@ -169,10 +174,12 @@ class response_per_intent():
             self.sessattr = dict()
     
     def startover_response_per_intent(self):
+        '''Handle startover intent.'''
         if self.intent_name == 'startover_intent':
             return elicit_slot_without_button(self.sessattr, 'restart_session_intent', self.slots, "resconv", {"contentType": "PlainText", "content": "Are you sure you want to restart? (Yes/No)"})
             
     def response_per_resconv(self):
+        '''Return response based on the user choice to restart the session.'''
         if self.slots['resconv'] is None:
             if self.intent_name == "out_of_intent":
                 return elicit_slot_without_button(self.sessattr, self.intent_name, self.slots, "resconv", {"contentType": "PlainText", "content": "I think we are having trouble with the conversation. Do you want to restart? (Yes/No)"})
@@ -256,6 +263,7 @@ class response_per_intent():
 
     
 def lambda_handler(event, context):
+    '''Create response_per_intent class objects and calls class methods.'''
     rpi = response_per_intent(event)
     startover_response = rpi.startover_response_per_intent()
     if startover_response is not None:
