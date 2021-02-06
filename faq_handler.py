@@ -7,8 +7,7 @@ faq_single function deals with returning the message for faq_single only
 swi fucntion deals with returning the message for faq_multiple only
 
 Special cases in faq_multiple: 
-(1) cost intent- business sales and purchase does not require identifying 'business sales and purchase' slot value but needs to pick keywords such as business/property, sell/buy and \
-based on the comnination of these keywords a slot value is assigned.
+(1) cost intent- business sales and purchase does not require identifying 'business sales and purchase' slot value but needs to pick keywords such as business/property, sell/buy and based on the comnination of these keywords a slot value is assigned.
 (2) intent faq_who_exe_bene_att is applicable to wills (attorney/beneciary) and LPA (attorney) services only and output is based on these three choices. 
 (3) cost intent- once service is identified as LPA, the output depends on the follwed up options for single or couple.
 '''
@@ -93,6 +92,8 @@ def general_info(sessattr):
 child_bot_name = 'FAQ_legal'
 child_bot_version = 'BetaA'
 username = 'msharma'
+response_posttext_fallback = "Sorry, I do not understand. Would you like to give your contact details for someone from the firm to contact you (Yes/No)?"
+response_choices = "I can answer your queries in the following practices areas. Please select from these."
 
 def posttext(bot_Name, bot_Alias, user_Id, input_Text, sessattr):
     response = boto3.client('lex-runtime').post_text(botName=bot_Name,
@@ -128,8 +129,15 @@ class response_per_intent():
                         self.sessattr['practicetype'] = response['sessionAttributes']['practicetype']
                 elif response['message'] == 'Sorry, can you please repeat that?':
                     #if user text is not understood by the 'faq_legal 'bot
-                    actual_intent_name = elicit_slot_without_button(self.sessattr, "contact_details", self.slots, "contactdetails", {"contentType": "PlainText", "content": "Sorry, I do not understand. Would \
-                                            you like to give your contact details for someone from the firm to contact you (Yes/No)?"})
+                    actual_intent_name = elicit_slot_without_button(
+                                                self.sessattr,
+                                                "contact_details",
+                                                self.slots,
+                                                "contactdetails",
+                                                {"contentType": "PlainText",
+                                                 "content": response_posttext_fallback
+                                                 }
+                    )
             else:
                 actual_intent_name = self.sessattr['prev_intent']
         else:
@@ -144,16 +152,21 @@ class response_per_intent():
                     self.slots['practicetype'] = practice_map[self.slots['practicetype']]
                 self.sessattr['practicetype'] = self.slots['practicetype']
             if self.slots['practicetype'] == None and 'practicetype' not in self.sessattr:
-                actual_intent_name = elicit_slot(self.sessattr, self.intent_name, self.slots, "practicetype", {"contentType": "PlainText", "content": "I can answer your queries in the following practices areas. Please \
-                                    select from these."}, buttons_practype_faq)
+                actual_intent_name = elicit_slot(
+                                        self.sessattr,
+                                        self.intent_name,
+                                        self.slots,
+                                        "practicetype",
+                                        {"contentType": "PlainText",
+                                         "content": response_choices},
+                                         buttons_practype_faq
+                )
             if 'practicetype' in self.sessattr:
                 self.sessattr = identify_faq_index(self.sessattr, practice_list, self.ind)
                 if self.sessattr['index_faq'] == 20:
                     if 'prev_intent' in self.sessattr:
                         del self.sessattr['prev_intent']
-                    actual_intent_name = elicit_slot_without_button(self.sessattr, "contact_details", self.slots, "contactdetails", {"contentType": "PlainText", "content": "I can't help you \
-                                with this service. But I can get you in touch with a solicitor to help you with your case. Would you like to give your contact details for someone \
-                                from the firm to conatct you? (Yes/No)"})
+                    actual_intent_name = elicit_slot_without_button(self.sessattr, "contact_details", self.slots, "contactdetails", {"contentType": "PlainText", "content": "I can't help you with this service. But I can get you in touch with a solicitor to help you with your case. Would you like to give your contact details for someone from the firm to conatct you? (Yes/No)"})
                 else:
                     if 'prev_intent' in self.sessattr:
                         if self.sessattr['prev_intent'] == 'contact_details':
@@ -215,11 +228,9 @@ class response_per_intent():
         # get practicetype
         if self.slots['practicetype'] is None and 'practicetype' not in self.sessattr:
             if actual_intent_name == "faq_store_will_intent":
-                return elicit_slot(self.sessattr, self.intent_name, self.slots, "practicetype", {"contentType": "PlainText", "content": "I can answer your queries in the following practices areas. Please \
-                                    select from these."}, buttons_practype_faq_store)
+                return elicit_slot(self.sessattr, self.intent_name, self.slots, "practicetype", {"contentType": "PlainText", "content": "I can answer your queries in the following practices areas. Please select from these."}, buttons_practype_faq_store)
             else:
-                return elicit_slot(self.sessattr, self.intent_name, self.slots, "practicetype", {"contentType": "PlainText", "content": "I can answer your queries in the following practices areas. Please \
-                                    select from these."}, buttons_practype_faq)
+                return elicit_slot(self.sessattr, self.intent_name, self.slots, "practicetype", {"contentType": "PlainText", "content": "I can answer your queries in the following practices areas. Please select from these."}, buttons_practype_faq)
         elif self.sessattr['practicetype'] is not None:
             #self.sessattr['practicetype'] = self.slots['practicetype']
             self.sessattr = identify_faq_index(self.sessattr, practice_list, self.ind)  
@@ -227,8 +238,7 @@ class response_per_intent():
                 #(1) 'prev_intent' is not recorded when 'practicetype' is 'any other' for the restart to function correctly after: what is the price? -> any other -> restart -> no
                 if 'prev_intent' in self.sessattr:
                     del self.sessattr['prev_intent']
-                return elicit_slot_without_button(self.sessattr, "contact_details", self.slots, "contactdetails", {"contentType": "PlainText", "content": "I can't help you with this \
-                    service. But I can get you in touch with a solicitor to help you with your case. Would you like to give your contact details for someone from the firm to conatct you? (Yes/No)"})
+                return elicit_slot_without_button(self.sessattr, "contact_details", self.slots, "contactdetails", {"contentType": "PlainText", "content": "I can't help you with this service. But I can get you in touch with a solicitor to help you with your case. Would you like to give your contact details for someone from the firm to conatct you? (Yes/No)"})
             
         if actual_intent_name == "faq_cost_legalaid_intent":
             if self.sessattr['practicetype'].lower() == "lasting power of attorney":

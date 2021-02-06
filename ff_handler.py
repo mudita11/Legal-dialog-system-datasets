@@ -934,10 +934,8 @@ class response_per_intent():
                     self.slots[item] = self.inputtext
                     self.sessattr[item] = self.slots[item]
             slot_list = full_slot_list[self.intent_name]
-            message1 = "Thank you for that. We have your contact details. One of our lawyers will be in touch soon in order that we can discuss this matter with you in more depth. \
-                        Alternatively, you can contact the Immigration Team on 01206 835270."
-            message2 = "We have your contact details. One of the lawyers will be in touch soon in order that we can discuss this matter with you in more depth. \
-                        Alternatively, you can contact the Immigration Team on 01206 835270."
+            message1 = "Thank you for that. We have your contact details. One of our lawyers will be in touch soon in order that we can discuss this matter with you in more depth. Alternatively, you can contact the Immigration Team on 01206 835270."
+            message2 = "We have your contact details. One of the lawyers will be in touch soon in order that we can discuss this matter with you in more depth. Alternatively, you can contact the Immigration Team on 01206 835270."
         
         response = save_into_table_closing_remark(intent_request, self.table, self.sessattr, self.slots, slot_list, message1, message2)
         return response
