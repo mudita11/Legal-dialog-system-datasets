@@ -135,8 +135,7 @@ class response_per_intent():
                                                 self.slots,
                                                 "contactdetails",
                                                 {"contentType": "PlainText",
-                                                 "content": response_posttext_fallback
-                                                 }
+                                                 "content": response_posttext_fallback}
                     )
             else:
                 actual_intent_name = self.sessattr['prev_intent']
