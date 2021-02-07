@@ -166,11 +166,16 @@ def elicit_intent_initial_options(sessattr, message):
     '''Return two use cases as the choice options to the user.'''
     return elicit_intent(sessattr, {"contentType": "PlainText", "content": message}, buttons_practype_initial_options)
 
+response_startover = "Are you sure you want to restart? (Yes/No)"
+response_ofi = "I think we are having trouble with the conversation. Do you want to restart? (Yes/No)"
+restart_confirmed = "Your session has been restarted. I can assist you with the following services today. Please select from these."
+end_response = "Thank you. We have your contact details. Someone from the firm will contact you as soon as possible. You can find our contact details here https://www.fjg.co.uk/contact-us/colchester"
+response_firm_details = "No problem. You can find our contact details here https://www.fjg.co.uk/contact-us/colchester. What else would you like to know?"
 
-class response_per_intent():
+class RestartResponseHandler:
     '''Handle restart and resume for two user cases with multiple services.'''
     def __init__(self, intent_request):
-        '''Construct all the necessary attributes for the response_per_intent object.'''
+        '''Construct all the necessary attributes for the RestartResponseHandler object.'''
         self.slots = get_slots(intent_request)
         self.intent_name = intent_request['currentIntent']['name']
         self.sessattr = get_sessattr(intent_request)
@@ -180,19 +185,39 @@ class response_per_intent():
     def startover_response_per_intent(self):
         '''Handle startover intent.'''
         if self.intent_name == 'startover_intent':
-            return elicit_slot_without_button(self.sessattr, 'restart_session_intent', self.slots, "resconv", {"contentType": "PlainText", "content": "Are you sure you want to restart? (Yes/No)"})
+            return elicit_slot_without_button(
+                                self.sessattr,
+                                'restart_session_intent',
+                                self.slots,
+                                "resconv",
+                                {"contentType": "PlainText",
+                                 "content": response_startover})
             
     def response_per_resconv(self):
         '''Return response based on the user choice to restart the session.'''
         if self.slots['resconv'] is None:
             if self.intent_name == "out_of_intent":
-                return elicit_slot_without_button(self.sessattr, self.intent_name, self.slots, "resconv", {"contentType": "PlainText", "content": "I think we are having trouble with the conversation. Do you want to restart? (Yes/No)"})
+                return elicit_slot_without_button(
+                                    self.sessattr,
+                                    self.intent_name,
+                                    self.slots,
+                                    "resconv",
+                                    {"contentType": "PlainText",
+                                     "content": response_ofi})
             elif self.intent_name == "restart_session_intent":
-                return elicit_slot_without_button(self.sessattr, "restart_session_intent", self.slots, "resconv", {"contentType": "PlainText", "content": "Are you sure you want to restart? (Yes/No)"})
+                return elicit_slot_without_button(
+                                    self.sessattr,
+                                    "restart_session_intent",
+                                    self.slots,
+                                    "resconv",
+                                    {"contentType": "PlainText",
+                                     "content": response_startover})
     
         if self.slots['resconv'].lower() == 'yes':
             self.sessattr = {}
-            return elicit_intent_initial_options(self.sessattr, "Your session has been restarted. I can assist you with the following services today. Please select from these.")
+            return elicit_intent_initial_options(
+                                    self.sessattr,
+                                    restart_confirmed)
     
         if self.slots['resconv'].lower() == 'no':
             if 'prev_intent' in self.sessattr:
@@ -204,12 +229,18 @@ class response_per_intent():
                         #hi -> i want to speak to a solicitor -> any other -> sam -> sam -> 234 -> sam-sam -> casedesc. -> restart -> no
                         #justice -> justice -> yes -> sam -> jan -> 123 -> sam-jan -> casedesc. -> restart -> no
                         if 'firstname' in self.sessattr:
-                            return elicit_intent_without_button(self.sessattr, {"contentType": "PlainText", "content": "Thank you. We have your contact details. Someone from the firm will contact you as soon as possible. You can find our contact details here https://www.fjg.co.uk/contact-us/colchester"})
+                            return elicit_intent_without_button(
+                                            self.sessattr,
+                                            {"contentType": "PlainText",
+                                             "content": end_response})
                         else:
                             #hi -> i want to speak to a solicitor -> any other -> no -> restart -> no
                             #justice -> justice -> no -> restart -> no
                             #what is the price -> employment contract -> no -> restart -> no
-                            return elicit_intent_without_button(self.sessattr, {"contentType": "PlainText", "content": "No problem. You can find our contact details here https://www.fjg.co.uk/contact-us/colchester. What else would you like to know?"})
+                            return elicit_intent_without_button(
+                                                    self.sessattr,
+                                                    {"contentType": "PlainText",
+                                                     "content": response_firm_details})
                     else:
                         #hi -> i want to speak to a solicitor -> any other -> sam -> restart -> no
                         #justice -> justice -> yes -> sam -> restart -> no
@@ -267,8 +298,8 @@ class response_per_intent():
 
     
 def lambda_handler(event, context):
-    '''Create response_per_intent class objects and calls class methods.'''
-    rpi = response_per_intent(event)
+    '''Create RestartResponseHandler objects and calls class methods.'''
+    rpi = RestartResponseHandler(event)
     startover_response = rpi.startover_response_per_intent()
     if startover_response is not None:
         return startover_response

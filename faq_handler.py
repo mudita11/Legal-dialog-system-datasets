@@ -103,10 +103,10 @@ def posttext(bot_Name, bot_Alias, user_Id, input_Text, sessattr):
                                 inputText=input_Text);
     return response
             
-class response_per_intent():
+class FAQResponseHandler:
     '''Handle faq use case to answer user queries in multiple services.'''
     def __init__(self, intent_request):
-        '''Construct all the necessary attributes for the response_per_intent object.'''
+        '''Construct all the necessary attributes for the FAQResponseHandler object.'''
         self.slots = get_slots(intent_request)
         self.intent_name = intent_request['currentIntent']['name']
         self.sessattr = get_sessattr(intent_request)
@@ -252,8 +252,8 @@ class response_per_intent():
         return resp
     
 def lambda_handler(event, context):
-    '''Create response_per_intent class objects and calls class methods.'''
-    rpi = response_per_intent(event)
+    '''Create FAQResponseHandler objects and calls class methods.'''
+    rpi = FAQResponseHandler(event)
     actual_intent_name = rpi.retrieve_faq_actual_intent_name()
     if isinstance(actual_intent_name, dict):
         return actual_intent_name

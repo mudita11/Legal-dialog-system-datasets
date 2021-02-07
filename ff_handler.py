@@ -23,10 +23,10 @@ def posttext(bot_Name, bot_Alias, user_Id, input_Text):
     return response
 
     
-class response_per_intent():
+class FactfindingResponseHandler:
     '''Ask questions to the user and record their contact details and case related information specific to a service.'''
     def __init__(self, intent_request):
-        '''Construct all the necessary attributes for the response_per_intent object.'''
+        '''Construct all the necessary attributes for the FactfindingResponseHandler object.'''
         self.slots = get_slots(intent_request)
         self.inputtext = intent_request['inputTranscript']
         self.intent_name = intent_request['currentIntent']['name']
@@ -39,17 +39,17 @@ class response_per_intent():
     def create_dynamodb_table(self):
         '''Create a MySQL table, 'user_data', in DynamoDB.'''
         self.table = dynamodb.create_table(
-                TableName = 'user_data',
-                KeySchema = [
-                                {'AttributeName' :   'user_ID', 'KeyType'   :   'HASH'},
-                                {'AttributeName' :   'practicetype', 'KeyType'   :   'RANGE'},
-                            ],
-                AttributeDefinitions = [
-                                        {'AttributeName' : 'user_ID', 'AttributeType' :   'S'},
-                                        {'AttributeName' :   'practicetype', 'AttributeType' :   'S'},
-                                        ],
+                TableName='user_data',
+                KeySchema=[
+                        {'AttributeName': 'user_ID', 'KeyType': 'HASH'},
+                        {'AttributeName': 'practicetype', 'KeyType': 'RANGE'},
+                ],
+                AttributeDefinitions=[
+                        {'AttributeName': 'user_ID', 'AttributeType': 'S'},
+                        {'AttributeName': 'practicetype', 'AttributeType': 'S'},
+                ],
                 ProvisionedThroughput={'ReadCapacityUnits': 3, 'WriteCapacityUnits': 3}
-                )
+        )
     
     def find_slot_in_y_n_intent_slot(self):
         '''Find slot with yes and no choices.'''
@@ -61,14 +61,32 @@ class response_per_intent():
 
     def ff_questions(self, slot_y_n_choices, intent_request):
         '''Handle the user queries to fact-finding case and fallback intent.'''
-        str_to_function_name={'get_firstname': get_firstname, 'get_lastname': get_lastname, 'get_phonenumber': get_phonenumber, 'get_emailaddress': get_emailaddress}
+        str_to_function_name = {
+                    'get_firstname': get_firstname,
+                    'get_lastname': get_lastname,
+                    'get_phonenumber': get_phonenumber,
+                    'get_emailaddress': get_emailaddress
+        }
         
         if self.intent_name == 'fallback_intent':
-            return elicit_slot_without_button(self.sessattr, "contact_details", self.slots, "contactdetails", {"contentType": "PlainText", "content": full_intent_slot_message["contact_details"]["contactdetails"]})
+            return elicit_slot_without_button(
+                                self.sessattr,
+                                "contact_details",
+                                self.slots, "contactdetails",
+                                {"contentType": "PlainText",
+                                 "content": full_intent_slot_message["contact_details"]["contactdetails"]}
+            )
                     
         if self.intent_name == 'contact_details':
             if self.slots['contactdetails'] is None and 'contactdetails' not in self.sessattr:
-                return elicit_slot_without_button(self.sessattr, self.intent_name, self.slots, "contactdetails", {"contentType": "PlainText", "content": full_intent_slot_message[self.intent_name]["contactdetails"]})
+                return elicit_slot_without_button(
+                                self.sessattr,
+                                self.intent_name,
+                                self.slots,
+                                "contactdetails",
+                                {"contentType": "PlainText",
+                                "content": full_intent_slot_message[self.intent_name]["contactdetails"]}
+                )
             if self.slots['contactdetails'] is not None: 
                 self.sessattr['contactdetails'] = self.slots['contactdetails']
             if self.sessattr['contactdetails'].lower() == 'no':
@@ -942,8 +960,8 @@ class response_per_intent():
 
         
 def lambda_handler(event, context):
-    '''Create response_per_intent class objects and calls class methods.'''
-    rpi = response_per_intent(event)
+    '''Create FactfindingResponseHandler objects and calls class methods.'''
+    rpi = FactfindingResponseHandler(event)
     slot_y_n_choices = rpi.find_slot_in_y_n_intent_slot()
     return rpi.ff_questions(slot_y_n_choices, event)
 
