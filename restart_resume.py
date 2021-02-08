@@ -24,33 +24,89 @@ logger = logging.getLogger()
                         
 def faq_single(sessattr, intent_with_single_message_faq, switch_to_intent):
     '''Return response for user faq query when resumed.'''
-    return close(sessattr, "Close", "Fulfilled", {"contentType": "PlainText", "content": intent_with_single_message_faq[switch_to_intent]})
+    return close(
+            sessattr,
+            "Close",
+            "Fulfilled",
+            {"contentType": "PlainText",
+             "content": intent_with_single_message_faq[switch_to_intent]}
+    )
 
 def faq_multiple(sessattr, intent_with_multiple_message_faq, switch_to_intent, slots):
     '''Return response for user ff query when resumed.'''
     ind = int(sessattr['index_faq'])
     if switch_to_intent == 'faq_who_executer_beneficiary_attorney' and ind == 14:
         if sessattr['exebeneatt'].lower() == 'executor':
-            return close(sessattr, "Close", "Fulfilled", {"contentType": "PlainText", "content": intent_with_multiple_message_faq[switch_to_intent][ind][0]})
+            return close(
+                        sessattr,
+                        "Close",
+                        "Fulfilled",
+                        {"contentType": "PlainText",
+                         "content": intent_with_multiple_message_faq[switch_to_intent][ind][0]}
+            )
         if sessattr['exebeneatt'].lower() == 'beneficiary':
-            return close(sessattr, "Close", "Fulfilled", {"contentType": "PlainText", "content": intent_with_multiple_message_faq[switch_to_intent][ind][1]})
+            return close(
+                        sessattr,
+                        "Close",
+                        "Fulfilled",
+                        {"contentType": "PlainText",
+                         "content": intent_with_multiple_message_faq[switch_to_intent][ind][1]}
+            )
     if switch_to_intent == 'faq_cost_legalaid_intent':
         if ind == 15:
             if sessattr["singlecouple"].lower() == "single":
-                return elicit_slot_without_button(sessattr, "contact_details", slots, "contactdetails", {"contentType": "PlainText", "content": intent_with_multiple_message_faq[switch_to_intent][ind][0]})
+                return elicit_slot_without_button(
+                                    sessattr,
+                                    "contact_details",
+                                    slots,
+                                    "contactdetails",
+                                    {"contentType": "PlainText",
+                                     "content": intent_with_multiple_message_faq[switch_to_intent][ind][0]}
+                )
             if sessattr["singlecouple"].lower() == "couple":
-                return elicit_slot_without_button(sessattr, "contact_details", slots, "contactdetails", {"contentType": "PlainText", "content": intent_with_multiple_message_faq[switch_to_intent][ind][1]})
+                return elicit_slot_without_button(
+                                    sessattr,
+                                    "contact_details",
+                                    slots,
+                                    "contactdetails",
+                                    {"contentType": "PlainText",
+                                     "content": intent_with_multiple_message_faq[switch_to_intent][ind][1]}
+                )
         else:
-            return elicit_slot_without_button(sessattr, "contact_details", slots, "contactdetails", {"contentType": "PlainText", "content": intent_with_multiple_message_faq[switch_to_intent][ind]})            
-    return close(sessattr, "Close", "Fulfilled", {"contentType": "PlainText", "content": intent_with_multiple_message_faq[switch_to_intent][ind]})
+            return elicit_slot_without_button(
+                                sessattr,
+                                "contact_details",
+                                slots,
+                                "contactdetails",
+                                {"contentType": "PlainText",
+                                 "content": intent_with_multiple_message_faq[switch_to_intent][ind]}
+            )
+    return close(
+                sessattr,
+                "Close",
+                "Fulfilled",
+                {"contentType": "PlainText",
+                 "content": intent_with_multiple_message_faq[switch_to_intent][ind]}
+    )
     
 def general_info(sessattr):
     '''Return response for user enquiry for a particular service (practicetype) when resumed.'''
-    return close(sessattr, "Close", "Fulfilled", {"contentType": "PlainText", "content": "Sure, What would you like to know about "+sessattr['practicetype']+"?"})
+    return close(
+                sessattr,
+                "Close",
+                "Fulfilled",
+                {"contentType": "PlainText",
+                 "content": "Sure, What would you like to know about "+sessattr['practicetype']+"?"}
+    )
     
 def slot_not_filled_return(output_session_attributes):
     '''Identify slots not stored in session history.'''
-    return elicit_intent(output_session_attributes, {"contentType": "PlainText", "content": "What else can I help you with today? Please select from these."}, buttons_practype_initial_options)
+    return elicit_intent(
+                    output_session_attributes,
+                    {"contentType": "PlainText",
+                     "content": "What else can I help you with today? Please select from these."},
+                     buttons_practype_initial_options
+    )
                                                                             
 def fact_finding_without_y_n_resconv_no(output_session_attributes, slots, switch_to_intent):
         '''Handle fact-finding intents without yes and no choices after user chooses to resume the session.'''
@@ -70,8 +126,23 @@ def fact_finding_without_y_n_resconv_no(output_session_attributes, slots, switch
             return slot_not_filled_return(output_session_attributes)
         first_slot_to_be_filled = slots_not_filled[0]
         if first_slot_to_be_filled in slot_to_button_mapping.keys():
-            return elicit_slot(output_session_attributes, switch_to_intent, slots, first_slot_to_be_filled, {"contentType": "PlainText", "content": message[first_slot_to_be_filled]}, slot_to_button_mapping[first_slot_to_be_filled])
-        return elicit_slot_without_button(output_session_attributes, switch_to_intent, slots, first_slot_to_be_filled, {"contentType": "PlainText", "content": message[first_slot_to_be_filled]})
+            return elicit_slot(
+                            output_session_attributes,
+                            switch_to_intent,
+                            slots,
+                            first_slot_to_be_filled,
+                            {"contentType": "PlainText",
+                             "content": message[first_slot_to_be_filled]},
+                            slot_to_button_mapping[first_slot_to_be_filled]
+            )
+        return elicit_slot_without_button(
+                                output_session_attributes,
+                                switch_to_intent,
+                                slots,
+                                first_slot_to_be_filled,
+                                {"contentType": "PlainText",
+                                 "content": message[first_slot_to_be_filled]}
+        )
 
 def get_slots_not_filled(lookup_slot_list, plmi, output_session_attributes, suffix):
     '''Lookup for slots in an intent not stored in history.'''
@@ -97,74 +168,215 @@ def fact_finding_with_y_n_resconv_no(output_session_attributes, slots, switch_to
         slot_y_n_choice = lookup_slot_list[plmi+'_1'][-1]
         if switch_to_intent == 'Personal_injury':
             if slot_y_n_choice not in output_session_attributes:
-                return elicit_slot_without_button(output_session_attributes, switch_to_intent, slots, slot_y_n_choice, {"contentType": "PlainText", "content": message[plmi+'_1'][slot_y_n_choice]})
+                return elicit_slot_without_button(
+                                    output_session_attributes,
+                                    switch_to_intent,
+                                    slots,
+                                    slot_y_n_choice,
+                                    {"contentType": "PlainText",
+                                     "content": message[plmi+'_1'][slot_y_n_choice]}
+                )
             if output_session_attributes[slot_y_n_choice].lower() == 'yes': 
                 slot_y_n_choice_1 = full_slot_list[plmi+'_1'][-2]
                 if slot_y_n_choice_1 not in output_session_attributes:
-                    return elicit_slot_without_button(output_session_attributes, switch_to_intent, slots, slot_y_n_choice_1, {"contentType": "PlainText", "content": message[plmi+'_1'][slot_y_n_choice_1]})
+                    return elicit_slot_without_button(
+                                        output_session_attributes,
+                                        switch_to_intent,
+                                        slots,
+                                        slot_y_n_choice_1,
+                                        {"contentType": "PlainText",
+                                         "content": message[plmi+'_1'][slot_y_n_choice_1]}
+                    )
                 if output_session_attributes[slot_y_n_choice_1].lower() == 'yes':
                     slots_not_filled = get_slots_not_filled(lookup_slot_list, plmi, output_session_attributes, "_1")
                     if slots_not_filled == []:
                         return slot_not_filled_return(output_session_attributes)
-                    return elicit_slot_without_button(output_session_attributes, switch_to_intent, slots, slots_not_filled[0], {"contentType": "PlainText", "content": message[plmi+'_1'][slots_not_filled[0]]})
+                    return elicit_slot_without_button(
+                                        output_session_attributes,
+                                        switch_to_intent,
+                                        slots,
+                                        slots_not_filled[0],
+                                        {"contentType": "PlainText",
+                                         "content": message[plmi+'_1'][slots_not_filled[0]]}
+                    )
                 elif output_session_attributes[slot_y_n_choice_1].lower() == 'no':
                     slots_not_filled = get_slots_not_filled(lookup_slot_list, plmi, output_session_attributes, "_2")
                     if slots_not_filled == []:
                         return slot_not_filled_return(output_session_attributes)
-                    return elicit_slot_without_button(output_session_attributes, switch_to_intent, slots, slots_not_filled[0], {"contentType": "PlainText", "content": message[plmi+'_2'][slots_not_filled[0]]})
+                    return elicit_slot_without_button(
+                                        output_session_attributes,
+                                        switch_to_intent,
+                                        slots,
+                                        slots_not_filled[0],
+                                        {"contentType": "PlainText",
+                                         "content": message[plmi+'_2'][slots_not_filled[0]]}
+                    )
                 else:
-                    return elicit_slot_without_button(output_session_attributes, switch_to_intent, slots, slot_y_n_choice_1, {"contentType": "PlainText", "content": "Please gice a valid answer."})
+                    return elicit_slot_without_button(
+                                        output_session_attributes,
+                                        switch_to_intent,
+                                        slots,
+                                        slot_y_n_choice_1,
+                                        {"contentType": "PlainText",
+                                         "content": "Please gice a valid answer."}
+                    )
             elif output_session_attributes[slot_y_n_choice].lower() == 'no':
                 slot_y_n_choice_3 = full_slot_list[plmi+'_3'][-1]
                 if slot_y_n_choice_3 not in output_session_attributes:
-                    return elicit_slot_without_button(output_session_attributes, switch_to_intent, slots, slot_y_n_choice_3, {"contentType": "PlainText", "content": message[plmi+'_3'][slot_y_n_choice_3]})
+                    return elicit_slot_without_button(
+                                        output_session_attributes,
+                                        switch_to_intent,
+                                        slots,
+                                        slot_y_n_choice_3,
+                                        {"contentType": "PlainText",
+                                         "content": message[plmi+'_3'][slot_y_n_choice_3]}
+                    )
                 if output_session_attributes[slot_y_n_choice_3].lower() == 'yes':                        
                     slots_not_filled = get_slots_not_filled(lookup_slot_list, plmi, output_session_attributes, "_3")
                     if slots_not_filled == []:
                         return slot_not_filled_return(output_session_attributes)
-                    return elicit_slot_without_button(output_session_attributes, switch_to_intent, slots, slots_not_filled[0], {"contentType": "PlainText", "content": message[plmi+'_1'][slots_not_filled[0]]})
+                    return elicit_slot_without_button(
+                                        output_session_attributes,
+                                        switch_to_intent,
+                                        slots,
+                                        slots_not_filled[0],
+                                        {"contentType": "PlainText",
+                                         "content": message[plmi+'_1'][slots_not_filled[0]]}
+                    )
                 elif output_session_attributes[slot_y_n_choice_3].lower() == 'no':
                     slots_not_filled = get_slots_not_filled(lookup_slot_list, plmi, output_session_attributes, "_4")
                     if slots_not_filled == []:
                         return slot_not_filled_return(output_session_attributes)
-                    return elicit_slot_without_button(output_session_attributes, switch_to_intent, slots, slots_not_filled[0], {"contentType": "PlainText", "content": message[plmi+'_4'][slots_not_filled[0]]})
+                    return elicit_slot_without_button(
+                                        output_session_attributes,
+                                        switch_to_intent,
+                                        slots,
+                                        slots_not_filled[0],
+                                        {"contentType": "PlainText",
+                                         "content": message[plmi+'_4'][slots_not_filled[0]]}
+                    )
                 else:
-                    return elicit_slot_without_button(output_session_attributes, switch_to_intent, slots, slot_y_n_choice_3, {"contentType": "PlainText", "content": "Please give a valid answer."})
+                    return elicit_slot_without_button(
+                                        output_session_attributes,
+                                        switch_to_intent,
+                                        slots,
+                                        slot_y_n_choice_3,
+                                        {"contentType": "PlainText",
+                                         "content": "Please give a valid answer."}
+                    )
             else:
-                return elicit_slot_without_button(output_session_attributes, switch_to_intent, slots, slot_y_n_choice, {"contentType": "PlainText", "content": "Please give a valid answer."})
+                return elicit_slot_without_button(
+                                    output_session_attributes,
+                                    switch_to_intent,
+                                    slots,
+                                    slot_y_n_choice,
+                                    {"contentType": "PlainText",
+                                     "content": "Please give a valid answer."}
+                )
         else:    
             if slot_y_n_choice not in output_session_attributes:
                 if switch_to_intent == 'Commercial_lease_acting_for_landlord':
                     if 'tenant_landlord' not in output_session_attributes:
-                        return elicit_slot(output_session_attributes, switch_to_intent, slots, 'tenant_landlord', {"contentType": "PlainText", "content": message[plmi+'_1']['tenant_landlord']}, commercial_tenant_landlord_button)
+                        return elicit_slot(
+                                        output_session_attributes,
+                                        switch_to_intent,
+                                        slots,
+                                        'tenant_landlord',
+                                        {"contentType": "PlainText",
+                                         "content": message[plmi+'_1']['tenant_landlord']},
+                                        commercial_tenant_landlord_button
+                        )
                     elif output_session_attributes['tenant_landlord'].lower() == 'landlord':
-                        return elicit_slot_without_button(output_session_attributes, switch_to_intent, slots, slot_y_n_choice, {"contentType": "PlainText", "content": message[plmi+'_1'][slot_y_n_choice+'_1']})
+                        return elicit_slot_without_button(
+                                            output_session_attributes,
+                                            switch_to_intent,
+                                            slots,
+                                            slot_y_n_choice,
+                                            {"contentType": "PlainText",
+                                             "content": message[plmi+'_1'][slot_y_n_choice+'_1']}
+                        )
                     elif output_session_attributes['tenant_landlord'].lower() == 'tenant':
-                        return elicit_slot_without_button(output_session_attributes, switch_to_intent, slots, slot_y_n_choice, {"contentType": "PlainText", "content": message[plmi+'_1'][slot_y_n_choice+'_2']})
-                return elicit_slot_without_button(output_session_attributes, switch_to_intent, slots, slot_y_n_choice, {"contentType": "PlainText", "content": message[plmi+'_1'][slot_y_n_choice]})
+                        return elicit_slot_without_button(
+                                            output_session_attributes,
+                                            switch_to_intent,
+                                            slots,
+                                            slot_y_n_choice,
+                                            {"contentType": "PlainText",
+                                             "content": message[plmi+'_1'][slot_y_n_choice+'_2']}
+                        )
+                return elicit_slot_without_button(
+                                    output_session_attributes,
+                                    switch_to_intent,
+                                    slots,
+                                    slot_y_n_choice,
+                                    {"contentType": "PlainText",
+                                     "content": message[plmi+'_1'][slot_y_n_choice]}
+                )
             if output_session_attributes[slot_y_n_choice].lower() == 'yes':
                 slots_not_filled = get_slots_not_filled(lookup_slot_list, plmi, output_session_attributes, "_1")
                 if slots_not_filled == []:
                     return slot_not_filled_return(output_session_attributes)
                 first_slot_to_be_filled = slots_not_filled[0]  
                 if first_slot_to_be_filled in slot_to_button_mapping.keys():
-                    return elicit_slot(output_session_attributes, switch_to_intent, slots, first_slot_to_be_filled, {"contentType": "PlainText", "content": message[plmi+'_1'][first_slot_to_be_filled]}, slot_to_button_mapping[first_slot_to_be_filled])
-                return elicit_slot_without_button(output_session_attributes, switch_to_intent, slots, first_slot_to_be_filled, {"contentType": "PlainText", "content": message[plmi+'_1'][first_slot_to_be_filled]})
+                    return elicit_slot(
+                                output_session_attributes,
+                                switch_to_intent,
+                                slots,
+                                first_slot_to_be_filled,
+                                {"contentType": "PlainText",
+                                 "content": message[plmi+'_1'][first_slot_to_be_filled]},
+                                slot_to_button_mapping[first_slot_to_be_filled]
+                    )
+                return elicit_slot_without_button(
+                                    output_session_attributes,
+                                    switch_to_intent,
+                                    slots,
+                                    first_slot_to_be_filled,
+                                    {"contentType": "PlainText",
+                                     "content": message[plmi+'_1'][first_slot_to_be_filled]}
+                )
             elif output_session_attributes[slot_y_n_choice].lower() == 'no':
                 slots_not_filled = get_slots_not_filled(lookup_slot_list, plmi, output_session_attributes, "_2")
                 if slots_not_filled == []:
                     return slot_not_filled_return(output_session_attributes)
                 first_slot_to_be_filled = slots_not_filled[0]    
                 if first_slot_to_be_filled in slot_to_button_mapping.keys():
-                    return elicit_slot(output_session_attributes, switch_to_intent, slots, first_slot_to_be_filled, {"contentType": "PlainText", "content": message[plmi+'_2'][first_slot_to_be_filled]}, slot_to_button_mapping[first_slot_to_be_filled])
-                return elicit_slot_without_button(output_session_attributes, switch_to_intent, slots, first_slot_to_be_filled, {"contentType": "PlainText", "content": message[plmi+'_2'][first_slot_to_be_filled]})
+                    return elicit_slot(
+                                output_session_attributes,
+                                switch_to_intent,
+                                slots,
+                                first_slot_to_be_filled,
+                                {"contentType": "PlainText",
+                                 "content": message[plmi+'_2'][first_slot_to_be_filled]},
+                                slot_to_button_mapping[first_slot_to_be_filled]
+                    )
+                return elicit_slot_without_button(
+                                    output_session_attributes,
+                                    switch_to_intent,
+                                    slots,
+                                    first_slot_to_be_filled,
+                                    {"contentType": "PlainText",
+                                     "content": message[plmi+'_2'][first_slot_to_be_filled]}
+                )
             else:
-                return elicit_slot_without_button(output_session_attributes, switch_to_intent, slots, slot_y_n_choice, {"contentType": "PlainText", "content": "Please give a valid answer."})
+                return elicit_slot_without_button(
+                                    output_session_attributes,
+                                    switch_to_intent,
+                                    slots,
+                                    slot_y_n_choice,
+                                    {"contentType": "PlainText",
+                                     "content": "Please give a valid answer."}
+                )
 
     
 def elicit_intent_initial_options(sessattr, message):
     '''Return two use cases as the choice options to the user.'''
-    return elicit_intent(sessattr, {"contentType": "PlainText", "content": message}, buttons_practype_initial_options)
+    return elicit_intent(
+                sessattr,
+                {"contentType": "PlainText",
+                 "content": message},
+                buttons_practype_initial_options
+    )
 
 response_startover = "Are you sure you want to restart? (Yes/No)"
 response_ofi = "I think we are having trouble with the conversation. Do you want to restart? (Yes/No)"
@@ -252,49 +464,119 @@ class RestartResponseHandler:
                             if slots_not_filled == []:
                                 return slot_not_filled_return(output_session_attributes)
                             first_slot_to_be_filled = slots_not_filled[0]    
-                            return elicit_slot_without_button(self.sessattr, switch_to_intent, self.slots, first_slot_to_be_filled, {"contentType": "PlainText", "content": full_intent_slot_message['contact_details'][first_slot_to_be_filled]})
+                            return elicit_slot_without_button(
+                                                self.sessattr,
+                                                switch_to_intent,
+                                                self.slots,
+                                                first_slot_to_be_filled,
+                                                {"contentType": "PlainText",
+                                                 "content": full_intent_slot_message['contact_details'][first_slot_to_be_filled]}
+                            )
                     
                 # in response to: "justice" -> justice -> restart -> no
                 if switch_to_intent == "fallback_intent":
-                    return elicit_slot_without_button(self.sessattr, "contact_details", self.slots, "contactdetails", {"contentType": "PlainText", "content": "I would need your contact details for someone from the firm to contact you. Are you happy to give your contact details? (Yes/No)"})
+                    return elicit_slot_without_button(
+                                        self.sessattr,
+                                        "contact_details",
+                                        self.slots,
+                                        "contactdetails",
+                                        {"contentType": "PlainText", "content": "I would need your contact details for someone from the firm to contact you. Are you happy to give your contact details? (Yes/No)"}
+                    )
                 
                 # fact-finding intents without yes and no slots
                 if switch_to_intent == 'buy_sell_intent':
                     if self.sessattr['practicetype'].lower() == 'business sales and purchase':
-                        return fact_finding_without_y_n_resconv_no(self.sessattr, self.slots, switch_to_intent)
+                        return fact_finding_without_y_n_resconv_no(
+                                                self.sessattr,
+                                                self.slots,
+                                                switch_to_intent)
                     else:
-                        return fact_finding_with_y_n_resconv_no(self.sessattr, self.slots, switch_to_intent)
+                        return fact_finding_with_y_n_resconv_no(
+                                                self.sessattr,
+                                                self.slots,
+                                                switch_to_intent)
                     
                 elif switch_to_intent in intent_without_y_n_slot:
-                    return fact_finding_without_y_n_resconv_no(self.sessattr, self.slots, switch_to_intent)
+                    return fact_finding_without_y_n_resconv_no(
+                                            self.sessattr,
+                                            self.slots,
+                                            switch_to_intent)
                 
                 #fact-finding intents with yes and no slots
                 elif switch_to_intent in intent_with_y_n_slot:
-                    return fact_finding_with_y_n_resconv_no(self.sessattr, self.slots, switch_to_intent)
+                    return fact_finding_with_y_n_resconv_no(
+                                            self.sessattr,
+                                            self.slots,
+                                            switch_to_intent)
                     
                 elif switch_to_intent in all_faq_intents:
                     if switch_to_intent in intent_with_single_message_faq.keys():
-                        return faq_single(self.sessattr, intent_with_single_message_faq, switch_to_intent)
+                        return faq_single(
+                                    self.sessattr,
+                                    intent_with_single_message_faq,
+                                    switch_to_intent
+                        )
                 
                     if switch_to_intent in intent_with_multiple_message_faq.keys():
                         if switch_to_intent == "faq_who_executer_beneficiary_attorney":
                             if 'exebeneatt' not in self.sessattr:
-                                return elicit_slot(self.sessattr, "all_faq", self.slots, "exebeneatt", {"contentType": "PlainText", "content": "Please select from these."}, buttons_exe_bene_att)
+                                return elicit_slot(
+                                            self.sessattr,
+                                            "all_faq",
+                                            self.slots,
+                                            "exebeneatt",
+                                            {"contentType": "PlainText",
+                                             "content": "Please select from these."},
+                                            buttons_exe_bene_att
+                                )
                         if 'practicetype' in self.sessattr:
                             if switch_to_intent == "faq_cost_legalaid_intent" and int(self.sessattr['index_faq']) == 15:
                                 if 'singlecouple' not in self. sessattr: 
-                                    return elicit_slot(self.sessattr, "all_faq", self.slots, "singlecouple", {"contentType": "PlainText", "content": "Are you applying as a single person or a couple?"}, buttons_single_couple)                
+                                    return elicit_slot(
+                                                self.sessattr,
+                                                "all_faq",
+                                                self.slots,
+                                                "singlecouple",
+                                                {"contentType": "PlainText",
+                                                 "content": "Are you applying as a single person or a couple?"},
+                                                buttons_single_couple
+                                    )
                         else: 
-                            return elicit_slot(self.sessattr, "all_faq", self.slots, "practicetype", {"contentType": "PlainText", "content": "I can answer your queries in the following practices areas. Please select from these."}, buttons_practype_faq)
-                        return faq_multiple(self.sessattr, intent_with_multiple_message_faq, switch_to_intent, self.slots)
+                            return elicit_slot(
+                                        self.sessattr,
+                                        "all_faq",
+                                        self.slots,
+                                        "practicetype",
+                                        {"contentType": "PlainText",
+                                         "content": "I can answer your queries in the following practices areas. Please select from these."},
+                                        buttons_practype_faq
+                            )
+                        return faq_multiple(
+                                    self.sessattr,
+                                    intent_with_multiple_message_faq,
+                                    switch_to_intent,
+                                    self.slots
+                        )
             elif 'practicetype' in self.sessattr:
                 if self.sessattr['practicetype'].lower() == 'any other':
                     #ff case: hi -> i want to speak to a solicitor -> any other -> restart -> no
                     #faq case: what is the price? -> any other -> restart -> no
-                    return elicit_slot_without_button(self.sessattr, "contact_details", self.slots, "contactdetails", {"contentType": "PlainText", "content": "I can't help you with this service. But I can get you in touch with a solicitor to help you with your case. Would you like to give your contact details for some form the firm to conatct you? (Yes/No)"})
+                    return elicit_slot_without_button(
+                                        self.sessattr,
+                                        "contact_details",
+                                        self.slots,
+                                        "contactdetails",
+                                        {"contentType": "PlainText",
+                                         "content": "I can't help you with this service. But I can get you in touch with a solicitor to help you with your case. Would you like to give your contact details for some form the firm to conatct you? (Yes/No)"}
+                    )
                 return general_info(self.sessattr)
             else:
-                return elicit_intent(self.sessattr, {"contentType": "PlainText", "content": "Your session has been resumed. I can assist you with the following services today. Please select from these."}, buttons_practype_initial_options)
+                return elicit_intent(
+                                self.sessattr,
+                                {"contentType": "PlainText",
+                                 "content": "Your session has been resumed. I can assist you with the following services today. Please select from these."},
+                                 buttons_practype_initial_options
+                )
 
     
 def lambda_handler(event, context):
